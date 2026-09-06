@@ -1,0 +1,67 @@
+---
+import Section from '../ui/Section.astro';
+import Backdrop from '../ui/Backdrop.astro';
+import DecryptText from '../ui/DecryptText.astro';
+import { pillarPlacement } from '../../config/visuals';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['architecture'];
+}
+
+const { copy } = Astro.props;
+---
+
+<Section id="architecture" label={copy.eyebrow} class="items-center">
+  <Backdrop slot="backdrop" label="architecture — ornithopter hull" wash="from-void via-ink to-void" />
+
+  <div
+    class="mx-auto grid w-full max-w-[110rem] grid-cols-1 gap-10 px-5 pt-28 pb-20 md:px-12 lg:grid-cols-[16rem_1fr_16rem] lg:grid-rows-[auto_1fr_auto] lg:items-start lg:gap-x-16"
+  >
+    {
+      copy.pillars.map((pillar, i) => (
+        <div
+          class:list={['max-w-52', pillarPlacement[pillar.id]]}
+          data-anim="scale"
+          style={`--anim-delay:${200 + i * 100}ms`}
+        >
+          <h3 class="font-display text-2xl leading-tight font-bold text-white">{pillar.title}</h3>
+          <p class="mt-2 font-display text-[0.6rem] tracking-[0.4em] text-white/60 uppercase">
+            {pillar.tag}
+          </p>
+        </div>
+      ))
+    }
+
+    <div class="lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:self-center">
+      <DecryptText
+        as="h2"
+        text={copy.title}
+        class="w-full text-center font-display text-5xl leading-none font-bold text-white lg:text-7xl"
+      />
+
+      <div class="my-8 flex items-center justify-center gap-3" aria-hidden="true">
+        <span class="h-px w-24 bg-white/40"></span>
+        <span class="size-4 rounded-full bg-white"></span>
+        <span class="h-px w-24 bg-white/40"></span>
+      </div>
+
+      <p
+        class="mx-auto max-w-2xl text-center text-base leading-relaxed text-white/75 lg:text-lg"
+        data-anim="scale"
+      >
+        {copy.body}
+      </p>
+
+      <a
+        href="#tours"
+        class="mx-auto mt-12 flex w-fit flex-col items-center gap-2 font-display text-[0.6rem] tracking-[0.4em] text-white/60 uppercase transition-colors hover:text-white"
+      >
+        {copy.cta}<span class="sr-only">&nbsp;— {copy.title}</span>
+        <svg viewBox="0 0 24 24" class="size-6 fill-current" aria-hidden="true">
+          <path d="M12 16 4 8h16z"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+</Section>

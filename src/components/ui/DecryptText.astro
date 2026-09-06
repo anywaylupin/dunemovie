@@ -1,0 +1,17 @@
+---
+/**
+ * Text that resolves out of a character scramble when it scrolls into view.
+ * Renders the real string server-side, so it reads correctly without JS
+ * and for crawlers — the script only takes over once it's visible.
+ */
+interface Props {
+  text: string;
+  /** element to render, e.g. "h2" or "span" */
+  as?: string;
+  class?: string;
+}
+
+const { text, as: Tag = 'span', class: className = '' } = Astro.props;
+---
+
+<Tag data-decrypt class={className}>{text}</Tag>

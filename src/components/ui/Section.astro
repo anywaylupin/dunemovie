@@ -1,0 +1,41 @@
+---
+interface Props {
+  id: string;
+  /** Accessible name for the landmark, and the label shown in the rail. */
+  label: string;
+  /** id of the entry in the pinned Chapter block that this section owns */
+  chapter?: string;
+  class?: string;
+  /** taller-than-viewport sections opt out of the fixed height */
+  auto?: boolean;
+}
+
+const { id, label, chapter, class: className = '', auto = false } = Astro.props;
+---
+
+{/*
+  The backdrop slot sits outside [data-scene]. GSAP (scripts/gsap.ts) only
+  ever tweens [data-scene] during the cross-dissolve; if the background
+  moved with it, the transition would open a seam at the section edge.
+
+  Unlike the CSS animation-timeline: view() approach this replaced, GSAP's
+  ScrollTrigger has no opinion about overflow: hidden on ancestors — it
+  measures position via getBoundingClientRect, not a scroll-container
+  timeline, so that specific footgun is gone. Clipping here is fine if a
+  future change needs it.
+*/}
+<section
+  id={id}
+  data-slot="section"
+  data-section={id}
+  data-chapter={chapter}
+  aria-label={label}
+  tabindex="-1"
+  class="relative isolate w-full focus:outline-none"
+>
+  <slot name="backdrop" />
+
+  <div data-scene class:list={['min-h-svh w-full', auto ? '' : 'flex', className]}>
+    <slot />
+  </div>
+</section>

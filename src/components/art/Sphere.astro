@@ -1,0 +1,35 @@
+---
+/**
+ * A planet.
+ *
+ * Shading lives in global.css under [data-sphere] — a specular highlight,
+ * a terminator, and limb darkening, all percentage-based so this component
+ * works unchanged from a 24px marker to a 36rem globe. What varies per world
+ * is only the body colour and the colour of its air, so those are all this
+ * takes.
+ *
+ * `<slot />` lands above the shading, which is where surface detail goes
+ * (the hatch texture, a map, pins).
+ */
+interface Props {
+  /** gradient stop list for the body, lit stop first */
+  tint: string;
+  /** CSS colour for the atmospheric rim; omit for an airless world */
+  glow?: string;
+  /** adds the standing hatch texture as surface detail */
+  texture?: boolean;
+  class?: string;
+}
+
+const { tint, glow, texture = true, class: className = '' } = Astro.props;
+---
+
+<span class:list={['relative isolate block aspect-square', className]}>
+  {glow && <span data-sphere-glow style={`--glow:${glow}`} aria-hidden="true" />}
+
+  <span data-sphere class="block size-full">
+    <span class:list={['absolute inset-0 bg-radial-[at_32%_26%]', tint]}></span>
+    {texture && <span data-texture="hatch" class="absolute inset-0 opacity-15"></span>}
+    <slot />
+  </span>
+</span>

@@ -1,0 +1,25 @@
+---
+import Wordmark from './Wordmark.astro';
+import GlyphBlock from './GlyphBlock.astro';
+import MenuIsland from '../islands/MenuIsland.tsx';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  nav: Copy['nav'];
+}
+
+const { nav } = Astro.props;
+---
+
+<header
+  data-slot="top-bar"
+  class="pointer-events-none fixed inset-x-0 top-0 z-70 flex items-start justify-between p-5 md:p-8"
+>
+  <div class="pointer-events-auto">
+    <MenuIsland nav={nav} client:idle />
+  </div>
+
+  <Wordmark class="pointer-events-auto absolute left-1/2 -translate-x-1/2" />
+
+  <GlyphBlock class="hidden lg:block" />
+</header>

@@ -1,0 +1,50 @@
+---
+/**
+ * Two identical rows of bars, the played one clipped to `--progress`.
+ *
+ * The duplication buys something: advancing playback is a single custom
+ * property write on the container, not a class change across ninety
+ * elements four times a second. The clip is a `clip-path`, so it composites
+ * without touching layout.
+ */
+interface Props {
+  bars?: number;
+  /** share of the waveform already played, 0–1; the script overrides this */
+  progress?: number;
+  class?: string;
+}
+
+const { bars = 90, progress = 0, class: className = '' } = Astro.props;
+
+// Deterministic heights keep the markup stable between builds, and let the
+// Preact island render bars that match this one exactly.
+const heights = Array.from({ length: bars }, (_, i) => {
+  const wave = Math.sin(i * 0.7) * Math.cos(i * 0.23) * Math.sin(i * 0.11 + 1);
+  return 12 + Math.abs(wave) * 88;
+});
+---
+
+<div
+  data-slot="waveform"
+  data-audio-progress
+  class:list={['relative flex h-8 w-full items-center gap-[2px]', className]}
+  style={`--progress:${progress}`}
+  aria-hidden="true"
+>
+  {
+    heights.map((height) => (
+      <span class="w-[2px] shrink-0 rounded-full bg-white/40" style={`height:${height}%`} />
+    ))
+  }
+
+  <div
+    data-part="played"
+    class="pointer-events-none absolute inset-0 flex items-center gap-[2px] [clip-path:inset(0_calc(100%_-_var(--progress)*100%)_0_0)]"
+  >
+    {
+      heights.map((height) => (
+        <span class="w-[2px] shrink-0 rounded-full bg-cyan" style={`height:${height}%`} />
+      ))
+    }
+  </div>
+</div>

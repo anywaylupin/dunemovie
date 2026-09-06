@@ -1,0 +1,33 @@
+---
+/**
+ * Purely decorative corner readout from the reference. Hidden from
+ * assistive tech since it carries no meaning.
+ */
+interface Props {
+  lines?: string[];
+  class?: string;
+}
+
+const {
+  lines = [
+    'ADS4MK100LS',
+    'FJOSSIU28XNK BS98SJA7VMB',
+    'VKFLUD38NCLISKSMVF4LSKX',
+    'J289LMS8ASIP',
+    'S3Z81JOSQIU28XNK 2XM',
+    'M9X4DKFLU73JNCLIOP',
+    'SKJI2ZKLMOPS',
+  ],
+  class: className = '',
+} = Astro.props;
+---
+
+<div
+  aria-hidden="true"
+  class:list={[
+    'pointer-events-none space-y-1 text-right font-hud text-[0.6rem] leading-none tracking-[0.25em] text-white/60 uppercase',
+    className,
+  ]}
+>
+  {lines.map((line) => <p>{line}</p>)}
+</div>

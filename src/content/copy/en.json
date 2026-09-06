@@ -1,0 +1,521 @@
+{
+  "meta": {
+    "title": "Dune — Explore the World",
+    "description": "A scroll-driven editorial tour through the houses, planets, music and books of Dune."
+  },
+  "nav": {
+    "skip": "Skip to content",
+    "menu": "Menu",
+    "close": "Close",
+    "chaptersLabel": "Chapters",
+    "language": "ENG",
+    "chapters": [
+      {
+        "id": "hero",
+        "label": "Home"
+      },
+      {
+        "id": "about",
+        "label": "Description"
+      },
+      {
+        "id": "houses",
+        "label": "Great Houses"
+      },
+      {
+        "id": "atreides",
+        "label": "House Atreides"
+      },
+      {
+        "id": "harkonnen",
+        "label": "House Harkonnen"
+      },
+      {
+        "id": "fremen",
+        "label": "The Freemen"
+      },
+      {
+        "id": "heroes",
+        "label": "Heroes Gallery"
+      },
+      {
+        "id": "arrakis",
+        "label": "Arrakis"
+      },
+      {
+        "id": "caladan",
+        "label": "World"
+      },
+      {
+        "id": "architecture",
+        "label": "Architecture"
+      },
+      {
+        "id": "tours",
+        "label": "Tours"
+      },
+      {
+        "id": "soundtrack",
+        "label": "Soundtrack"
+      },
+      {
+        "id": "author",
+        "label": "Bibliography"
+      },
+      {
+        "id": "books",
+        "label": "Books"
+      },
+      {
+        "id": "comics",
+        "label": "Comics"
+      },
+      {
+        "id": "media",
+        "label": "Media"
+      },
+      {
+        "id": "credits",
+        "label": "Credits"
+      }
+    ],
+    "progressLabel": "Section progress",
+    "rail": [
+      {
+        "id": "hero",
+        "label": "Home",
+        "sections": [
+          "hero"
+        ]
+      },
+      {
+        "id": "about",
+        "label": "Description",
+        "sections": [
+          "about"
+        ]
+      },
+      {
+        "id": "atreides",
+        "label": "Fractions",
+        "sections": [
+          "atreides",
+          "harkonnen",
+          "fremen"
+        ]
+      },
+      {
+        "id": "caladan",
+        "label": "World",
+        "sections": [
+          "caladan"
+        ]
+      },
+      {
+        "id": "architecture",
+        "label": "Dune Architecture",
+        "sections": [
+          "architecture"
+        ]
+      },
+      {
+        "id": "soundtrack",
+        "label": "Space Orchestra",
+        "sections": [
+          "soundtrack"
+        ]
+      },
+      {
+        "id": "author",
+        "label": "Frank Herbert",
+        "sections": [
+          "author"
+        ]
+      }
+    ]
+  },
+  "player": {
+    "play": "Play",
+    "pause": "Pause",
+    "previous": "Previous track",
+    "next": "Next track",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "seek": "Seek within track",
+    "unavailable": "No audio file for this track"
+  },
+  "hero": {
+    "eyebrow": "Home",
+    "title": "Explore World of Dune",
+    "body": "Dune is a science fiction story set in a space empire far in the future. It follows Paul Atreides, heir to House Atreides, whose family is forced to leave the ocean world of Caladan and take control of the desert planet Arrakis.",
+    "cta": "Watch trailer",
+    "player": {
+      "track": "Herald of the Change",
+      "elapsed": "01:42",
+      "duration": "05:02"
+    }
+  },
+  "about": {
+    "eyebrow": "Description",
+    "title": "About",
+    "body": [
+      "A mythic and emotionally charged hero's journey. Dune tells the story of Paul Atreides, a gifted young man born into a destiny beyond his understanding, who must travel to the most dangerous planet in the universe to secure the future of his family and his people.",
+      "As rival forces fight over the planet's supply of the most valuable substance in existence, only those who can conquer their fear will survive."
+    ],
+    "cta": "Buy blu-ray",
+    "poster": "key art poster · 2:3"
+  },
+  "houses": {
+    "eyebrow": "Great Houses",
+    "title": "The Great Houses",
+    "body": "The Landsraad holds the balance between the noble houses, the Imperium and the orders that quietly shape both. Drag the cards to read each creed.",
+    "cta": "Learn more",
+    "sigil": "sigil",
+    "items": [
+      {
+        "id": "corrino",
+        "kind": "House",
+        "name": "Corrino",
+        "quote": "Secrets do not diminish when they are spread among many ears."
+      },
+      {
+        "id": "gesserit",
+        "kind": "Order",
+        "name": "Gesserit",
+        "quote": "Survival is the ability to swim in strange water."
+      },
+      {
+        "id": "harkonnen",
+        "kind": "House",
+        "name": "Harkonnen",
+        "quote": "There is no escape — we pay for the violence of our ancestors."
+      },
+      {
+        "id": "atreides",
+        "kind": "House",
+        "name": "Atreides",
+        "quote": "A great man does not seek to lead. He is called to it."
+      },
+      {
+        "id": "guild",
+        "kind": "Order",
+        "name": "Guild",
+        "quote": "The spice must flow."
+      }
+    ]
+  },
+  "factions": {
+    "eyebrow": "Fractions",
+    "symbolLabel": "Symbol",
+    "homeworldLabel": "Homeworld",
+    "sloganLabel": "Slogan",
+    "emblem": "emblem",
+    "cta": "Watch heroes",
+    "items": [
+      {
+        "id": "atreides",
+        "name": "House Atreides",
+        "watermark": "Atreides",
+        "body": [
+          "A rich history for the Atreides, as well as various other titles, including the House of Pelops, and successively Lords of Tantalos, Counts of Thuestes, Counts of Aramanli and Counts Chalcedony.",
+          "Siridar Dukes of Caladan, Siridar Dukes of Arrakis, and Emperors of the Known Universe; junior titles include Barons Pelops, Barons Menelaus and Counts Gamnonides."
+        ],
+        "symbol": "Hawk",
+        "homeworld": "Caladan",
+        "slogan": "Loyalty and Mercy"
+      },
+      {
+        "id": "harkonnen",
+        "name": "House Harkonnen",
+        "watermark": "Harkonnen",
+        "body": [
+          "House Harkonnen was a Great House of the Landsraad. The Harkonnen capital was Giedi Prime, a heavily industrialised planet with a low photosynthetic potential.",
+          "The house was known for underhanded political tactics and for an ancient feud with House Atreides. It was typically ruled by a Siridar Baron."
+        ],
+        "symbol": "Griffin",
+        "homeworld": "Giedi Prime",
+        "slogan": "Power and Brutality"
+      },
+      {
+        "id": "fremen",
+        "name": "The Freemen",
+        "watermark": "Fremen",
+        "body": [
+          "The Fremen were a sub-culture of humans descended from the Zensunni Wanderers who considered the planet Arrakis their home.",
+          "They formed an integral part in the establishment of the Atreides Empire and the Jihad launched by Paul Atreides, their adopted leader."
+        ],
+        "symbol": "Sphere",
+        "homeworld": "Arrakis",
+        "slogan": "Survival and Resistance"
+      }
+    ]
+  },
+  "heroes": {
+    "eyebrow": "Heroes Gallery",
+    "quote": "Beyond fear, his destiny awaits.",
+    "body": "The son of a great man and royal heir to House Atreides, Paul has spent his entire life being prepared for the greatness that comes with his family's name.",
+    "watchVideo": "Watch video",
+    "featured": "featured hero cut-out",
+    "filters": [
+      {
+        "id": "atreides",
+        "label": "Atreides",
+        "total": 5
+      },
+      {
+        "id": "harkonnen",
+        "label": "Harkonnens",
+        "total": 6
+      },
+      {
+        "id": "fremen",
+        "label": "Freemen",
+        "total": 4
+      }
+    ],
+    "cards": [
+      {
+        "id": "leto",
+        "name": "Leto"
+      },
+      {
+        "id": "gurney",
+        "name": "Gurney"
+      },
+      {
+        "id": "paul",
+        "name": "Paul"
+      },
+      {
+        "id": "duncan",
+        "name": "Duncan"
+      },
+      {
+        "id": "jessica",
+        "name": "Jessica"
+      }
+    ]
+  },
+  "arrakis": {
+    "eyebrow": "Arrakis",
+    "title": "Arrakis",
+    "body": "Arrakis was for a long time the sole source of the spice melange, the substance that makes interstellar travel possible. It sits far from the populated worlds and their trade routes.",
+    "globe": "arrakis globe",
+    "cta": "Learn more",
+    "hotspot": "Terramorphing Station",
+    "worlds": [
+      {
+        "id": "caladan",
+        "name": "Caladan"
+      },
+      {
+        "id": "giedi-prime",
+        "name": "Giedi Prime"
+      },
+      {
+        "id": "niushe",
+        "name": "Niushe"
+      }
+    ],
+    "sites": [
+      {
+        "id": "great-flat",
+        "name": "The Great Flat"
+      },
+      {
+        "id": "imperial-basin",
+        "name": "Imperial Basin"
+      },
+      {
+        "id": "broken-land",
+        "name": "Broken Land"
+      }
+    ]
+  },
+  "caladan": {
+    "eyebrow": "World",
+    "title": "Caladan",
+    "body": [
+      "Caladan was the fiefdom of House Atreides and the birthplace of Duke Leto Atreides I, of Paul, and of most of the ancestors who ruled the planet before them. Their traditional seat was Castle Caladan.",
+      "After the Atreides moved to Arrakis, Count Hasimir Fenring was named Siridar-Absentia. When the house later ascended to the Golden Lion Throne, Caladan returned to direct Atreides rule."
+    ],
+    "cta": "Explore map",
+    "media": "Atreides Flagship"
+  },
+  "architecture": {
+    "eyebrow": "Architecture",
+    "title": "Dune Architecture",
+    "body": "Architects have long tried to imagine what the built world of the future will look like. Production designer Patrice Vermette had to imagine twenty thousand years ahead: a story spanning multiple planets, each with its own material logic, weather and idea of shelter.",
+    "cta": "Learn more",
+    "pillars": [
+      {
+        "id": "agnostic",
+        "title": "Agnostic Design",
+        "tag": "Implementation"
+      },
+      {
+        "id": "simplicity",
+        "title": "Simplicity & Efficience",
+        "tag": "Core"
+      },
+      {
+        "id": "eccentricity",
+        "title": "Eccentricity & Curation",
+        "tag": "Heart"
+      },
+      {
+        "id": "collective",
+        "title": "Collective Wisdom",
+        "tag": "Heritage"
+      }
+    ]
+  },
+  "tours": {
+    "eyebrow": "Tours",
+    "buy": "Buy ticket",
+    "note": "Travel on a steersman navigated Spacing Guild heighliner today",
+    "items": [
+      {
+        "id": "caladan",
+        "numeral": "I",
+        "title": "Fishing Tour",
+        "world": "Caladan",
+        "price": "¥9.99"
+      },
+      {
+        "id": "giedi-prime",
+        "numeral": "II",
+        "title": "Metal Forge Tour",
+        "world": "Giedi Prime",
+        "price": "¥29.99"
+      },
+      {
+        "id": "arrakis",
+        "numeral": "III",
+        "title": "Sandstorm Trip",
+        "world": "Arrakis",
+        "price": "¥49.99"
+      }
+    ]
+  },
+  "soundtrack": {
+    "eyebrow": "Soundtrack",
+    "title": "Space Orchestra",
+    "body": "The Dune Sketchbook runs a hundred minutes across nine tracks — an unhurried, cavernous score that treats the desert as an instrument.",
+    "cover": "album cover · 1:1",
+    "spotify": "Listen on Spotify",
+    "elapsed": "01:32",
+    "nowPlayingId": "house-atreides",
+    "tracks": [
+      {
+        "id": "song-of-the-sisters",
+        "n": 1,
+        "title": "Song of the Sisters",
+        "time": "16:25"
+      },
+      {
+        "id": "i-see-you",
+        "n": 2,
+        "title": "I See You in My Dreams",
+        "time": "18:25"
+      },
+      {
+        "id": "house-atreides",
+        "n": 3,
+        "title": "House Atreides",
+        "time": "13:54"
+      },
+      {
+        "id": "shortening",
+        "n": 4,
+        "title": "The Shortening of the Way",
+        "time": "11:14"
+      },
+      {
+        "id": "pauls-dream",
+        "n": 5,
+        "title": "Paul's Dream",
+        "time": "7:03"
+      },
+      {
+        "id": "moon-over-caladan",
+        "n": 6,
+        "title": "Moon Over Caladan",
+        "time": "8:34"
+      }
+    ]
+  },
+  "author": {
+    "eyebrow": "Bibliography",
+    "title": "Frank Herbert",
+    "body": [
+      "Frank Herbert used his science fiction novels to work through philosophy, religion, psychology, politics and ecology. The thread running under all of it was a fascination with human survival and evolution.",
+      "He attracted a devoted readership, many of whom set out to read everything he wrote, fiction and non-fiction alike, and treat him as an authority on the subjects his books circle."
+    ],
+    "signature": "Frank Herbert",
+    "heritageLabel": "Heritage level",
+    "heritageValue": "Legendary 100%"
+  },
+  "books": {
+    "eyebrow": "Books",
+    "author": "Frank Herbert",
+    "read": "Read ebook",
+    "items": [
+      {
+        "id": "dune",
+        "title": "Dune"
+      },
+      {
+        "id": "messiah",
+        "title": "Dune Messiah"
+      },
+      {
+        "id": "children",
+        "title": "Children of Dune"
+      }
+    ]
+  },
+  "comics": {
+    "eyebrow": "Comics",
+    "title": "Dune Comics",
+    "body": "Brian Herbert and Kevin J. Anderson, with artist Dev Pramanik, adapt their prequel novel into comics for the first time — set in the years leading up to the events of Dune.",
+    "cta": "Learn more"
+  },
+  "media": {
+    "eyebrow": "Media",
+    "items": [
+      {
+        "id": "part-two",
+        "title": "Dune: Part Two",
+        "kind": "Trailer"
+      },
+      {
+        "id": "duncan",
+        "title": "Duncan & Paul",
+        "kind": "Scene"
+      },
+      {
+        "id": "awakening",
+        "title": "Dune: Awakening",
+        "kind": "Announcement"
+      }
+    ],
+    "newsletter": {
+      "label": "Get Dune updates",
+      "placeholder": "Enter your email",
+      "submit": "Send"
+    },
+    "follow": "Follow",
+    "legal": "Fan project · all trademarks and artwork belong to their respective owners"
+  },
+  "credits": {
+    "eyebrow": "Credits",
+    "disclaimer": [
+      "This is not a commercial project, created for educational purposes only.",
+      "All materials in this project belong to their respective owners."
+    ],
+    "role": "UI design and art direction:",
+    "name": "Your name here",
+    "thanks": "Thanks for watching"
+  }
+}

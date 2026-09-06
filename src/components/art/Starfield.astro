@@ -1,0 +1,37 @@
+---
+/**
+ * The space the whole page sits in.
+ *
+ * One fixed plate behind every scene. It only becomes visible where the
+ * backdrops have faded out — at the section seams — which is the point: two
+ * neighbouring photographs resolve into stars rather than into a black bar,
+ * so the join reads as distance rather than as an edge.
+ *
+ * Fixed and mounted outside #smooth-wrapper, like the rest of the page
+ * chrome, so it does not travel with the scrolled content. scripts/gsap.ts
+ * drifts it against the scroll instead — slowly, because the whole illusion
+ * is that these are very far away.
+ */
+import { Image } from 'astro:assets';
+import { star } from '../../config/art';
+---
+
+<div data-slot="starfield" aria-hidden="true" class="pointer-events-none fixed inset-0 overflow-hidden">
+  {/* Taller than the viewport so the drift has room to travel. */}
+  <div data-starfield-plate class="absolute inset-x-0 -inset-y-[18%]">
+    <Image
+      src={star}
+      alt=""
+      widths={[768, 1280, 1920]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+      class="h-full w-full object-cover opacity-40 mix-blend-screen"
+    />
+  </div>
+
+  {/* Screened stars alone lift the whole frame; this puts the darkness back
+      everywhere except the middle distance, so the field reads as depth
+      rather than as a lighter background. */}
+  <div class="absolute inset-0 bg-radial from-transparent via-void/70 to-void"></div>
+</div>

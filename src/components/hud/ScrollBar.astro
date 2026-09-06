@@ -1,0 +1,46 @@
+---
+/**
+ * The page scrollbar, drawn as HUD instead of chrome.
+ *
+ * The native one is hidden in global.css and replaced by this, for one
+ * concrete reason: a classic scrollbar reserves a gutter — roughly 15px of
+ * real layout width taken out of every full-bleed backdrop on the page, and
+ * a seam down the right edge of artwork that is meant to run to it. This
+ * overlays instead, so the content is the full width of the window.
+ *
+ * It is a real scrollbar, not a progress meter: the thumb is sized to the
+ * proportion of the page in view and can be dragged, and clicking the track
+ * jumps. scripts/gsap.ts drives it, because it is the file that knows the
+ * scroll position — under ScrollSmoother the eased position is not
+ * `window.scrollY`, and a bar tracking the raw value would run ahead of the
+ * content it describes.
+ *
+ * Hidden from assistive tech and out of the tab order, exactly as the native
+ * one is. Keyboard scrolling is unaffected: it never went through the
+ * scrollbar in the first place.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<div
+  data-slot="scrollbar"
+  aria-hidden="true"
+  class:list={[
+    'fixed inset-y-0 right-0 z-60 hidden w-3 select-none md:block',
+    className,
+  ]}
+>
+  {/* hairline track, inset from the very edge so it reads as instrument
+      rather than as browser furniture */}
+  <span data-part="track" class="absolute inset-y-0 right-[5px] w-px bg-white/10"></span>
+
+  <span
+    data-part="thumb"
+    class="absolute top-0 right-0 flex w-3 cursor-grab justify-center active:cursor-grabbing"
+  >
+    <span class="h-full w-[3px] bg-white/45 transition-colors duration-200"></span>
+  </span>
+</div>

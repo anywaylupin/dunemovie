@@ -1,0 +1,48 @@
+---
+import Section from '../ui/Section.astro';
+import ChapterCopy from '../ui/ChapterCopy.astro';
+import Backdrop from '../ui/Backdrop.astro';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['author'];
+  step: number;
+}
+
+const { copy, step } = Astro.props;
+---
+
+<Section id="author" chapter="author" label={copy.eyebrow} class="items-center">
+  <Backdrop slot="backdrop" label="author — dust ridge" wash="from-stone-500/40 via-stone-800/60 to-void" />
+
+  <div
+    class="mx-auto grid w-full max-w-[110rem] grid-cols-1 items-center gap-12 px-5 pt-28 pb-20 md:px-12 lg:grid-cols-2"
+  >
+    <ChapterCopy title={copy.title} body={copy.body} />
+
+    <div class="relative lg:col-start-2" data-anim="blur" style="--anim-delay:200ms">
+      <div class="mb-4 flex justify-center lg:justify-end">
+        <p data-shape="slab" 
+ class="bg-void/70 px-5 py-2 font-display text-[0.65rem] tracking-[0.3em] text-white/70 uppercase ring-1 ring-white/20 ring-inset">
+          <span class="mr-2 text-cyan">▶</span>
+          {copy.heritageLabel} / <span class="font-bold text-white">{copy.heritageValue}</span>
+        </p>
+      </div>
+
+      <article data-shape="notch" class="relative bg-void/50 p-3 ring-1 ring-white/20 ring-inset backdrop-blur-sm">
+        <div class="relative">
+          <div data-texture="hatch" class="aspect-video w-full bg-linear-to-br from-neutral-600/40 to-void"></div>
+          <button
+            type="button"
+            class="absolute top-1/2 left-1/2 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full ring-1 ring-white/40 transition-colors hover:bg-white/10"
+            aria-label={copy.title}
+          >
+            <svg viewBox="0 0 24 24" class="size-6 fill-amber" aria-hidden="true">
+              <path d="M8 5v14l11-7z"></path>
+            </svg>
+          </button>
+        </div>
+      </article>
+    </div>
+  </div>
+</Section>

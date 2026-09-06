@@ -1,0 +1,712 @@
+@import 'tailwindcss';
+
+/* Self-hosted, latin-only subsets. No third-party font request, no
+   render-blocking round trip to fonts.googleapis.com. */
+@import '@fontsource/saira-condensed/latin-300.css';
+@import '@fontsource/saira-condensed/latin-400.css';
+@import '@fontsource/saira-condensed/latin-600.css';
+@import '@fontsource/saira-condensed/latin-700.css';
+@import '@fontsource/great-vibes/latin-400.css';
+
+/* The two faces the design is actually built on. Both are local files under
+   src/assets/fonts, so Vite hashes and fingerprints them like any other
+   asset — no third-party request here either.
+
+   Dune Rise is a titling face: wide, all-caps, one weight, and no `%` or
+   `~` in its cmap. It is used only where those limits do not bite — the
+   wordmark, the oversized watermarks, the faction slogans. Body copy and
+   anything needing 600/700 stays on Saira Condensed, which has the weights
+   Dune Rise does not.
+
+   Agency FB carries the HUD chrome: the tracked-out uppercase readouts,
+   rail labels and section labels, all of which only ever ask for 400. */
+@font-face {
+  font-family: 'Dune Rise';
+  src: url('../assets/fonts/Dune_Rise.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Agency FB';
+  src: url('../assets/fonts/AgencyFb.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------------------------------------------------------------
+   Tokens
+   --------------------------------------------------------------- */
+@theme {
+  --font-display: 'Saira Condensed', 'Arial Narrow', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Saira Condensed', 'Arial Narrow', ui-sans-serif, system-ui, sans-serif;
+  --font-title: 'Dune Rise', 'Agency FB', 'Saira Condensed', ui-sans-serif, sans-serif;
+  --font-hud: 'Agency FB', 'Saira Condensed', 'Arial Narrow', ui-sans-serif, sans-serif;
+  --font-script: 'Great Vibes', ui-serif, cursive;
+
+  --color-void: #04060c;
+  --color-ink: #080d18;
+  --color-slate-deep: #101a2b;
+
+  --color-hud: #9db0c8;
+  --color-accent: #e0272d;
+  --color-amber: #f2b230;
+  --color-cyan: #3fd6e8;
+  --color-lime: #a8e01e;
+
+  --color-atreides: #1d5b41;
+  --color-harkonnen: #8d1030;
+  --color-fremen: #6f5f0c;
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------------------------------------------------------------
+   Shapes and textures, addressed by attribute rather than class.
+   <span data-shape="slab"> instead of <span class="clip-slab">.
+   --------------------------------------------------------------- */
+[data-shape='slab'] {
+  clip-path: polygon(0 0, 100% 0, calc(100% - 1.25rem) 100%, 0 100%);
+}
+[data-shape='slab-left'] {
+  clip-path: polygon(1.25rem 0, 100% 0, 100% 100%, 0 100%);
+}
+[data-shape='card'] {
+  clip-path: polygon(14% 0, 100% 0, 86% 100%, 0 100%);
+}
+[data-shape='notch'] {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 1rem) 0,
+    100% 1rem,
+    100% 100%,
+    1rem 100%,
+    0 calc(100% - 1rem)
+  );
+}
+
+[data-texture='hatch'] {
+  background-image: repeating-linear-gradient(
+    45deg,
+    color-mix(in oklab, white 6%, transparent) 0 2px,
+    transparent 2px 12px
+  );
+}
+
+/* Oversized background lettering. Rendered as generated content so there
+   is no text node for a contrast audit to fail — it is pure decoration.
+
+   Set in Dune Rise and filled with a top-down fade rather than a flat
+   tint, so the letterforms read as light falling off them instead of as
+   grey text. The thin dark stroke is what keeps them legible now that a
+   photograph sits behind them rather than a gradient; it is sized in `em`
+   so it tracks the (viewport-relative) type size. */
+[data-watermark]::after {
+  content: attr(data-watermark);
+  font-family: var(--font-title);
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklab, white 22%, transparent) 0%,
+    transparent 86%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 0.012em color-mix(in oklab, black 45%, transparent);
+}
+
+/* ---------------------------------------------------------------
+   Spheres.
+
+   A flat disc with a centred radial gradient reads as a paper circle no
+   matter how it is animated. What makes a sphere is where the light is:
+   a specular highlight offset toward the light source, a terminator
+   opposite it, and limb darkening where the surface curves away at the
+   edge. All three are percentage-based gradients, so one rule serves the
+   24px world markers and the 36rem globe without a size variant.
+   --------------------------------------------------------------- */
+[data-sphere] {
+  position: relative;
+  border-radius: 9999px;
+  overflow: hidden;
+  /* contains the screen blend below, so the highlight lights the planet
+     and not whatever happens to sit behind it */
+  isolation: isolate;
+}
+
+/* The lit side. */
+[data-sphere]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at 32% 26%,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.14) 13%,
+    rgba(255, 255, 255, 0) 44%
+  );
+  mix-blend-mode: screen;
+}
+
+/* The shadowed side, and the edge falling away from the viewer. */
+[data-sphere]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      circle at 76% 78%,
+      rgba(0, 0, 0, 0.8) 0%,
+      rgba(0, 0, 0, 0.38) 32%,
+      rgba(0, 0, 0, 0) 64%
+    ),
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 56%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+/* Atmosphere. A separate element because the sphere clips its own
+   contents, and this has to bloom past the edge to read as air. */
+[data-sphere-glow] {
+  position: absolute;
+  inset: -10%;
+  z-index: -1;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 54%,
+    var(--glow, rgba(255, 255, 255, 0.3)) 70%,
+    transparent 86%
+  );
+  filter: blur(0.4rem);
+}
+
+/* ---------------------------------------------------------------
+   Artwork layers.
+
+   Every backdrop is a stack: the photograph, an orbital-line overlay, a
+   colour wash, and a readability scrim. The masks below are what stop a
+   half-frame portrait from ending in a hard vertical edge — they are the
+   one piece of that stack CSS has to own, since the shape depends on which
+   side the plate sits on.
+   --------------------------------------------------------------- */
+[data-art='fade-right'] {
+  -webkit-mask-image: linear-gradient(90deg, #000 34%, transparent 78%);
+  mask-image: linear-gradient(90deg, #000 34%, transparent 78%);
+}
+
+[data-art='fade-left'] {
+  -webkit-mask-image: linear-gradient(270deg, #000 34%, transparent 78%);
+  mask-image: linear-gradient(270deg, #000 34%, transparent 78%);
+}
+
+/* ---------------------------------------------------------------
+   Section seams.
+
+   Every scene is a different photograph, and two photographs that both run
+   to their own edge meet as a hard horizontal line. These masks fade each
+   backdrop out over a narrow band at its top and bottom, so neighbours
+   resolve into the same darkness with the starfield behind showing through
+   the join.
+
+   Deliberately narrow (8%). An earlier version used 18% and dissolved the
+   backdrops to nothing across the overlap as well; that read as the space
+   swallowing the scene rather than sitting between scenes, and each section
+   stopped owning its own frame. The band is the transition — the section
+   is not.
+   --------------------------------------------------------------- */
+[data-feather='both'] {
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(180deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+
+/* For the hero, whose top edge is the top of the page — there is nothing
+   above it to blend into, and its own starfield band lives up there. */
+[data-feather='bottom'] {
+  -webkit-mask-image: linear-gradient(180deg, #000 88%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 88%, transparent 100%);
+}
+
+/* The starfield sits behind every scene and shows through wherever the
+   backdrops have faded out. Slow drift is applied by scripts/gsap.ts. */
+[data-slot='starfield'] {
+  /* Paired with `relative z-10` on #smooth-wrapper. Explicit ordering
+     rather than a negative z-index, which would put it behind the body
+     background and never be seen. */
+  z-index: 0;
+}
+
+/* The starfield band at the top of the hero: one plate and its mirror,
+   dissolving downward so it never meets the horizon as a seam. */
+[data-art='star-band'] {
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 62%);
+  mask-image: linear-gradient(180deg, #000 0%, transparent 62%);
+}
+
+/* ---------------------------------------------------------------
+   Base
+   --------------------------------------------------------------- */
+@layer base {
+  html {
+    background-color: var(--color-void);
+    color: white;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Anchor jumps ease rather than teleport. No scroll library involved. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    overscroll-behavior-y: none;
+    /* Decorative artwork deliberately hangs past the right edge. */
+    overflow-x: clip;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-cyan);
+    outline-offset: 3px;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Entrance animations.
+
+   Every animated element carries data-anim="<name>". The observer in
+   scripts/reveal.ts adds data-inview when it arrives. Each section uses a
+   different name so the page does not repeat one motion fifteen times.
+
+   Unrelated to the section cross-dissolve below: this covers individual
+   elements inside a section (a heading, a card); GSAP in scripts/gsap.ts
+   covers each section's content block as a whole. The two compose — a
+   data-anim child moves relative to its already-moving data-scene parent —
+   without conflict, since they never target the same element.
+   --------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-js] [data-anim] {
+    transition-property: opacity, transform, filter, clip-path, letter-spacing;
+    transition-duration: var(--anim-duration, 900ms);
+    transition-timing-function: var(--ease-out-expo);
+    transition-delay: var(--anim-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  html[data-js] [data-anim]:not([data-inview]) {
+    opacity: 0;
+  }
+
+  /* vertical */
+  html[data-js] [data-anim='rise']:not([data-inview]) {
+    transform: translate3d(0, 2.5rem, 0);
+  }
+  html[data-js] [data-anim='fall']:not([data-inview]) {
+    transform: translate3d(0, -2rem, 0);
+  }
+
+  /* lateral */
+  html[data-js] [data-anim='slide-left']:not([data-inview]) {
+    transform: translate3d(-3.5rem, 0, 0);
+  }
+  html[data-js] [data-anim='slide-right']:not([data-inview]) {
+    transform: translate3d(3.5rem, 0, 0);
+  }
+  html[data-js] [data-anim='drift']:not([data-inview]) {
+    transform: translate3d(5rem, 0, 0) skewX(6deg);
+  }
+
+  /* masks and wipes */
+  html[data-js] [data-anim='mask-up']:not([data-inview]) {
+    clip-path: inset(100% 0 0 0);
+    transform: translate3d(0, 1rem, 0);
+  }
+  html[data-js] [data-anim='wipe']:not([data-inview]) {
+    clip-path: inset(0 100% 0 0);
+    opacity: 1;
+  }
+  html[data-js] [data-anim='iris']:not([data-inview]) {
+    clip-path: circle(30% at 50% 50%);
+  }
+
+  /* depth */
+  html[data-js] [data-anim='scale']:not([data-inview]) {
+    transform: scale(0.88);
+  }
+  html[data-js] [data-anim='zoom-out']:not([data-inview]) {
+    transform: scale(1.14);
+  }
+  html[data-js] [data-anim='tilt']:not([data-inview]) {
+    transform: perspective(1200px) rotateY(-22deg) translate3d(2.5rem, 0, 0);
+    transform-origin: left center;
+  }
+  html[data-js] [data-anim='flip']:not([data-inview]) {
+    transform: perspective(1000px) rotateX(38deg) translate3d(0, 2rem, 0);
+    transform-origin: center bottom;
+  }
+  html[data-js] [data-anim='orbit']:not([data-inview]) {
+    transform: rotate(-14deg) scale(0.82);
+  }
+
+  /* atmospherics */
+  html[data-js] [data-anim='blur']:not([data-inview]) {
+    filter: blur(14px);
+    transform: translate3d(0, 1rem, 0);
+  }
+  html[data-js] [data-anim='spread']:not([data-inview]) {
+    letter-spacing: 0.55em;
+    filter: blur(4px);
+  }
+
+  html[data-js] [data-anim][data-inview] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    clip-path: inset(0 0 0 0);
+  }
+  html[data-js] [data-anim='iris'][data-inview] {
+    clip-path: circle(75% at 50% 50%);
+  }
+
+  /* Drop the compositor hint once the element has landed. */
+  html[data-js] [data-anim][data-inview] {
+    will-change: auto;
+  }
+}
+
+/* Text mid-scramble must not drag the layout around. */
+[data-decrypt] {
+  display: inline-block;
+  white-space: pre-wrap;
+}
+
+/* ---------------------------------------------------------------
+   Scrollbar.
+
+   The document's own scrollbar is hidden and replaced by
+   hud/ScrollBar.astro, driven from scripts/gsap.ts. The point is the
+   gutter: a classic scrollbar reserves roughly 15px of layout width, which
+   on this page means every full-bleed backdrop stops 15px short of the
+   window and artwork meant to run to the edge does not. The replacement is
+   `position: fixed` and overlays the content, so it costs no width.
+
+   Only the root scroller is hidden. Inner scrollers — the Great Houses
+   carousel — keep theirs, because there it is the affordance that says the
+   row can be dragged.
+   --------------------------------------------------------------- */
+html {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* The one place an inner scrollbar is still wanted: the Great Houses
+   carousel, where it is the affordance that says the row can be moved.
+   Dressed to match the page scrollbar rather than left as browser
+   furniture — a 3px hairline that lights up on hover. */
+[data-slot='carousel'] {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, white 40%, transparent) transparent;
+}
+
+[data-slot='carousel']::-webkit-scrollbar {
+  height: 3px;
+}
+
+[data-slot='carousel']::-webkit-scrollbar-track {
+  background: color-mix(in oklab, white 10%, transparent);
+}
+
+[data-slot='carousel']::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, white 40%, transparent);
+}
+
+[data-slot='carousel']:hover {
+  scrollbar-color: var(--color-accent) transparent;
+}
+
+[data-slot='carousel']:hover::-webkit-scrollbar-thumb {
+  background: var(--color-accent);
+}
+
+/* Sized and positioned from script; this is only its appearance. */
+[data-slot='scrollbar'] [data-part='thumb'] {
+  min-height: 3rem;
+}
+
+[data-slot='scrollbar'] [data-part='thumb'] > span {
+  transition: background-color 200ms ease;
+}
+
+[data-slot='scrollbar']:hover [data-part='thumb'] > span,
+[data-slot='scrollbar'] [data-part='thumb'][data-dragging] > span {
+  background-color: var(--color-accent);
+}
+
+/* ---------------------------------------------------------------
+   Menu dialog. Native <dialog> supplies the focus trap, the inert
+   background and Escape-to-close; this only dresses it.
+   --------------------------------------------------------------- */
+dialog[data-slot='menu'] {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: white;
+  opacity: 0;
+  transition:
+    opacity 400ms var(--ease-out-expo),
+    overlay 400ms allow-discrete,
+    display 400ms allow-discrete;
+}
+
+dialog[data-slot='menu']::backdrop {
+  background: color-mix(in oklab, #04060c 92%, transparent);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  transition:
+    opacity 400ms var(--ease-out-expo),
+    overlay 400ms allow-discrete,
+    display 400ms allow-discrete;
+}
+
+dialog[data-slot='menu'][open],
+dialog[data-slot='menu'][open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  dialog[data-slot='menu'][open],
+  dialog[data-slot='menu'][open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog[data-slot='menu'],
+  dialog[data-slot='menu']::backdrop {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Section cross-dissolve and the faction cross-fade.
+
+   These are GSAP's, not CSS's — see scripts/gsap.ts. ScrollTrigger scrubs
+   [data-scene] and [data-faction-panel] to scroll position directly via
+   inline styles, gated on prefers-reduced-motion through gsap.matchMedia().
+
+   No base CSS is needed here: without JavaScript, or with reduced motion,
+   these elements simply keep the browser's default state (visible, static)
+   since nothing ever sets them otherwise. That is a genuine simplification
+   over the earlier CSS-timeline version, which had to explicitly hide
+   [data-scene] behind an html[data-js] flag to avoid a blank page before
+   the animation "caught up" to it.
+   --------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------
+   Interaction.
+
+   Hover and press states live here rather than in a dozen class lists, keyed
+   on the same data-slot attributes the components already carry. Everything
+   animates transform and opacity only, so nothing here triggers layout.
+   --------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  [data-slot='menu-trigger'] [data-part='frame'],
+  [data-slot='menu-trigger'] [data-part='shadow'],
+  [data-slot='menu-trigger'] [data-part='bar'],
+  [data-slot='menu-trigger'] [data-part='word'] {
+    transition:
+      transform 400ms var(--ease-out-expo),
+      opacity 300ms ease,
+      letter-spacing 400ms var(--ease-out-expo),
+      background-color 300ms ease;
+  }
+
+  /* the offset outline slides under the frame */
+  [data-slot='menu-trigger']:hover [data-part='shadow'] {
+    transform: translate(0, 0);
+    opacity: 0.7;
+  }
+
+  /* bars fan out from the centre, then close on press */
+  [data-slot='menu-trigger']:hover [data-part='bar']:first-child {
+    transform: translateY(-2px) scaleX(0.7);
+  }
+  [data-slot='menu-trigger']:hover [data-part='bar']:last-child {
+    transform: translateY(2px) scaleX(0.7);
+  }
+  [data-slot='menu-trigger']:hover [data-part='word'] {
+    letter-spacing: 0.55em;
+  }
+
+  [data-slot='menu-trigger']:active [data-part='frame'] {
+    transform: scale(0.92);
+  }
+  [data-slot='menu-trigger']:active [data-part='bar'] {
+    transform: none;
+  }
+
+  /* while the dialog is open the bars cross */
+  [data-slot='menu-trigger'][aria-expanded='true'] [data-part='bar']:first-child {
+    transform: translateY(4px) rotate(45deg);
+  }
+  [data-slot='menu-trigger'][aria-expanded='true'] [data-part='bar']:nth-child(2) {
+    opacity: 0;
+  }
+  [data-slot='menu-trigger'][aria-expanded='true'] [data-part='bar']:last-child {
+    transform: translateY(-4px) rotate(-45deg);
+  }
+
+  /* menu entries stagger in behind the backdrop */
+  dialog[data-slot='menu'][open] [data-part='chapter-link'] {
+    animation: menu-entry 500ms var(--ease-out-expo) both;
+    animation-delay: calc(var(--i, 0) * 35ms + 120ms);
+  }
+
+  /* shared affordances */
+  [data-slot='action-button'],
+  [data-slot='chapter-link'],
+  [data-rail-item] {
+    transition:
+      transform 300ms var(--ease-out-expo),
+      opacity 300ms ease,
+      color 300ms ease;
+  }
+  [data-slot='action-button']:hover {
+    transform: translateX(4px);
+  }
+  [data-slot='action-button']:active {
+    transform: translateX(4px) scale(0.97);
+  }
+  [data-slot='chapter-link']:hover {
+    transform: translateX(10px);
+  }
+  [data-rail-item]:hover {
+    transform: translateX(-4px);
+  }
+}
+
+@keyframes menu-entry {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Chapter block. Only opacity is ever transitioned — position is set per
+   panel and applied instantly, so nothing slides between placements.
+   --------------------------------------------------------------- */
+[data-slot='chapter'],
+[data-slot='chapter'] [data-chapter-panel] {
+  transition-property: opacity;
+  transition-duration: 500ms;
+  transition-timing-function: var(--ease-out-expo);
+}
+
+[data-slot='chapter'] [data-chapter-panel][data-active='true'] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-slot='chapter'],
+  [data-slot='chapter'] [data-chapter-panel] {
+    transition-duration: 1ms;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Chapter rail.
+
+   The rail only exists for the seven chaptered destinations; on any other
+   section it is hidden — visibility rather than opacity alone, so its links
+   leave the focus order with it.
+
+   The active marker is ringed by a scanner: two arcs turning at different
+   speeds in opposite directions. Transform and stroke only, so it composites
+   without touching layout.
+   --------------------------------------------------------------- */
+[data-slot='rail'] {
+  transition:
+    opacity 400ms var(--ease-out-expo),
+    visibility 400ms;
+}
+
+[data-slot='rail'][data-visible='false'] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+[data-rail-item] [data-part='ring'],
+[data-rail-item] [data-part='pip'] {
+  transition: opacity 400ms var(--ease-out-expo);
+}
+
+[data-rail-item] [data-part='arc-outer'] {
+  stroke-dasharray: 26 74;
+}
+
+[data-rail-item] [data-part='arc-inner'] {
+  stroke-dasharray: 8 92;
+}
+
+[data-rail-item] [data-part='arc-outer'],
+[data-rail-item] [data-part='arc-inner'] {
+  transform-origin: center;
+}
+
+[data-rail-item][data-active] [data-part='ring'],
+[data-rail-item][data-active] [data-part='pip'] {
+  opacity: 1;
+}
+
+[data-rail-item]:hover [data-part='ring'] {
+  opacity: 0.35;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-rail-item][data-active] [data-part='arc-outer'] {
+    animation: rail-scan 7s linear infinite;
+  }
+  [data-rail-item][data-active] [data-part='arc-inner'] {
+    animation: rail-scan 11s linear infinite reverse;
+  }
+}
+
+@keyframes rail-scan {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

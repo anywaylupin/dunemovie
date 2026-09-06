@@ -1,0 +1,101 @@
+---
+import Section from '../ui/Section.astro';
+import ChapterCopy from '../ui/ChapterCopy.astro';
+import Backdrop from '../ui/Backdrop.astro';
+import Sigil from '../art/Sigil.astro';
+import { hasSigil } from '../../config/sigils';
+import { houseTint, tint } from '../../config/visuals';
+import { backdropArt } from '../../config/art';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['houses'];
+  step: number;
+}
+
+const { copy, step } = Astro.props;
+---
+
+<Section id="houses" chapter="houses" label={copy.eyebrow} class="items-center">
+  <Backdrop
+    slot="backdrop"
+    label="houses — starfield"
+    art={backdropArt.houses}
+    wash="from-void via-ink to-slate-deep"
+    parallax={22}
+  />
+
+  <div
+    class="mx-auto grid w-full max-w-[110rem] grid-cols-1 items-center gap-12 px-5 pt-28 pb-20 md:px-12 lg:grid-cols-2 lg:gap-16"
+  >
+    <ChapterCopy title={copy.title} body={copy.body} cta={copy.cta} />
+
+    {/*
+      `py-8` is not decoration. A box that scrolls on one axis cannot leave
+      the other axis visible — the browser promotes it to a scrollport — so
+      the cards' `hover:-translate-y-2` was being clipped off the top. The
+      padding gives the lift somewhere to happen inside the scroller.
+
+      data-drag-scroll adds pointer dragging (scripts/drag-scroll.ts); the
+      snap type is dropped mid-drag so the carousel follows the cursor
+      instead of fighting it for position.
+    */}
+    <div
+      data-slot="carousel"
+      data-drag-scroll
+      class="lg:col-start-2 -mx-5 cursor-grab snap-x snap-mandatory overflow-x-auto px-5 py-8 data-[dragging]:cursor-grabbing md:-mx-12 md:px-12 lg:mx-0 lg:px-0"
+      data-anim="drift"
+      style="--anim-delay:150ms"
+    >
+      <ul class="flex gap-6">
+        {
+          copy.items.map((house) => (
+            <li class="shrink-0 snap-center">
+              <article data-shape="card" 
+ class:list={['relative flex h-[26rem] w-[19rem] flex-col justify-between bg-linear-to-b p-8 transition-transform duration-500 hover:-translate-y-2',
+ tint(houseTint, house.id),
+ ]}
+ >
+                <div data-texture="hatch" class="absolute inset-0 opacity-40"aria-hidden="true"/>
+                <header class="relative text-center">
+                  <p class="font-display text-[0.6rem] tracking-[0.4em] text-white/70 uppercase">
+                    · {house.kind} ·
+                  </p>
+                  <h3 class="mt-2 font-display text-2xl font-bold tracking-[0.2em] text-white uppercase">
+                    {house.name}
+                  </h3>
+                  <div class="mt-4 space-y-1">
+                    <span class="block h-px bg-white/50" />
+                    <span class="block h-px bg-white/25" />
+                  </div>
+                </header>
+
+                {/*
+                  Two of the five houses have a drawn mark; the rest keep
+                  the lettered ring until theirs is drawn, which is why
+                  Sigil renders nothing rather than a fallback of its own.
+                */}
+                <div
+                  class="relative mx-auto grid size-24 place-items-center rounded-full ring-1 ring-white/40"
+                  aria-hidden="true"
+                >
+                  {hasSigil(house.id) ? (
+                    <Sigil id={house.id} class="w-12 text-white/85" />
+                  ) : (
+                    <span class="font-hud text-[0.55rem] tracking-[0.3em] text-white/60 uppercase">
+                      {copy.sigil}
+                    </span>
+                  )}
+                </div>
+
+                <p class="relative text-sm leading-snug text-white/85 italic">
+                  “{house.quote}”
+                </p>
+              </article>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</Section>

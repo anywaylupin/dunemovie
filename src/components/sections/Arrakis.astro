@@ -1,0 +1,151 @@
+---
+import Section from '../ui/Section.astro';
+import Backdrop from '../ui/Backdrop.astro';
+import DecryptText from '../ui/DecryptText.astro';
+import ActionButton from '../ui/ActionButton.astro';
+import Sphere from '../art/Sphere.astro';
+import { worldTint, worldGlow, sitePosition, tint } from '../../config/visuals';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['arrakis'];
+}
+
+const { copy } = Astro.props;
+---
+
+<Section id="arrakis" label={copy.eyebrow} class="items-center">
+  <Backdrop slot="backdrop" label="arrakis — spice haze" wash="from-void via-ink to-void" />
+
+  <div class="mx-auto w-full max-w-[110rem] px-5 pt-28 pb-20 md:px-12">
+    <header class="mx-auto max-w-2xl text-center">
+      <span
+        class="mx-auto grid size-10 place-items-center rounded-full bg-white/10 ring-1 ring-white/30"
+        aria-hidden="true"
+      >
+        <span class="size-3 rounded-full bg-white/70"></span>
+      </span>
+      <DecryptText
+        as="h2"
+        text={copy.title}
+        class="mt-5 font-display text-5xl leading-none font-bold text-white lg:text-7xl"
+      />
+      <p class="mt-5 text-base leading-relaxed text-white/70" data-anim="orbit">{copy.body}</p>
+    </header>
+
+    <div class="relative mt-12 grid grid-cols-1 items-center gap-10 lg:grid-cols-[16rem_1fr_20rem]">
+      <ul class="flex justify-center gap-6 lg:flex-col lg:justify-start lg:gap-12">
+        {/*
+          `data-anim="scale"` rather than `orbit`: the orbit *reveal* spun
+          each marker in the plane of the screen, which is exactly what made
+          a circle read as a paper disc rather than as a body with a far
+          side. (Unrelated to `data-orbit` below, which is the scroll-linked
+          drift.)
+
+          Three nested owners, one per concern: the <li> carries the
+          entrance reveal, the orbit span is GSAP's to scrub, and the sphere
+          keeps its own CSS hover. Any two of them on the same element and
+          whichever writes `transform` last wins on every frame.
+
+          The whole marker floats, not just the planet inside its ring — a
+          planet drifting out of its own reticle reads as broken rather than
+          as depth. Each world gets a different rate so they separate from
+          each other, not only from the page.
+        */}
+        {
+          copy.worlds.map((world, i) => (
+            <li class="flex flex-col items-center" data-anim="scale" style={`--anim-delay:${i * 120}ms`}>
+              <span
+                data-orbit={24 + i * 16}
+                data-orbit-zoom="16"
+                class="flex flex-col items-center gap-3 will-change-transform"
+              >
+                <button
+                  type="button"
+                  aria-label={world.name}
+                  class="group grid size-24 place-items-center rounded-full ring-1 ring-white/20 transition-colors hover:ring-white/60 lg:size-32"
+                >
+                  <Sphere
+                    tint={tint(worldTint, world.id)}
+                    glow={worldGlow[world.id]}
+                    class="w-16 transition-transform duration-500 group-hover:scale-110 lg:w-24"
+                  />
+                </button>
+                <span class="font-hud text-[0.6rem] tracking-[0.35em] text-white/70 uppercase">
+                  · {world.name} ·
+                </span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="relative mx-auto aspect-square w-full max-w-xl" data-anim="iris">
+        {/*
+          The orbit wraps the globe *and* its pins, so the markers stay on
+          their coordinates while the whole body drifts and grows. A gentler
+          value than the small worlds: this one is close, and close things
+          move less.
+        */}
+        <div data-orbit="8" data-orbit-zoom="5" class="absolute inset-0 will-change-transform">
+        {/* The pins and the label are siblings of the sphere, not children:
+            the sphere clips and shades its own contents, and a map pin has
+            to stay at full contrast on the night side to be clickable. */}
+        <Sphere
+          tint="from-amber-200 via-orange-700 to-red-950"
+          glow="rgba(242, 178, 48, 0.42)"
+          class="absolute inset-0 w-full"
+        />
+        <div class="absolute inset-0 rounded-full ring-1 ring-white/15 ring-inset"></div>
+        <span
+          class="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center font-hud text-[0.6rem] tracking-[0.35em] text-white/70 uppercase"
+        >
+          {copy.globe}
+        </span>
+
+        {
+          copy.sites.map((site) => (
+            <button
+              type="button"
+              class="group absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1"
+              style={`left:${sitePosition[site.id]?.left ?? '50%'}; top:${sitePosition[site.id]?.top ?? '50%'}`}
+            >
+              <span class="size-3 rotate-45 bg-white/70 ring-1 ring-white transition-transform group-hover:scale-125" />
+              <span class="font-display text-[0.5rem] tracking-[0.25em] text-white/70 uppercase">
+                {site.name}
+              </span>
+            </button>
+          ))
+        }
+
+        <span
+          class="absolute top-[34%] right-[26%] size-4 rounded-full bg-cyan/30 ring-1 ring-cyan"
+          aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <div data-anim="orbit" style="--anim-delay:200ms">
+        <article data-shape="notch" class="bg-white/5 p-3 ring-1 ring-white/20 ring-inset backdrop-blur-sm">
+          <div class="relative">
+            <div data-texture="hatch" class="aspect-video w-full bg-linear-to-br from-slate-600/40 to-void"></div>
+            <span
+              class="absolute top-1/2 left-1/2 grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-void/60 ring-1 ring-white/40"
+            >
+              <svg viewBox="0 0 24 24" class="size-4 fill-amber" aria-hidden="true">
+                <path d="M8 5v14l11-7z"></path>
+              </svg>
+            </span>
+          </div>
+          <h3 class="mt-4 mb-2 flex items-center gap-3 px-1 font-display text-lg font-semibold text-white">
+            <span class="size-2 rotate-45 bg-cyan" aria-hidden="true"></span>
+            {copy.hotspot}
+          </h3>
+        </article>
+      </div>
+    </div>
+
+    <div class="mt-12 flex justify-center" data-anim="orbit">
+      <ActionButton label={copy.cta} context={copy.title} variant="outline" />
+    </div>
+  </div>
+</Section>

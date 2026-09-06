@@ -1,0 +1,49 @@
+---
+import Section from '../ui/Section.astro';
+import DecryptText from '../ui/DecryptText.astro';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['credits'];
+}
+
+const { copy } = Astro.props;
+---
+
+<Section id="credits" label={copy.eyebrow} class="items-center justify-center bg-void">
+  <div class="mx-auto max-w-xl px-5 py-24 text-center">
+      {
+      copy.disclaimer.map((line, i) => (
+        <p
+          class:list={['font-display text-base leading-relaxed text-white/60', i > 0 && 'mt-10']}
+          data-anim="blur"
+          style={`--anim-delay:${i * 150}ms`}
+        >
+          {line}
+        </p>
+      ))
+    }
+
+    <p class="mt-12 font-display text-sm tracking-[0.1em] text-white/60" data-anim="blur">
+      {copy.role}
+    </p>
+    <p class="mt-6 font-script text-5xl text-white" data-anim="wipe" style="--anim-delay:150ms">
+      {copy.name}
+    </p>
+
+    <span class="mx-auto mt-10 block size-6 rotate-45 rounded-[6px] bg-lime" aria-hidden="true"
+    ></span>
+
+    <div class="mt-10 flex items-center justify-center gap-3" aria-hidden="true">
+      <span class="size-1 bg-white/60"></span>
+      <span class="h-px w-64 bg-white/40"></span>
+      <span class="size-1 bg-white/60"></span>
+    </div>
+
+    <DecryptText
+      as="p"
+      text={copy.thanks}
+      class="mt-8 w-full font-display text-xl text-white"
+    />
+  </div>
+</Section>

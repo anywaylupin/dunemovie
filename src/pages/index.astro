@@ -1,0 +1,9 @@
+---
+import Page from '../components/Page.astro';
+import { getCopy, defaultLocale } from '../i18n/copy';
+
+const locale = Astro.currentLocale ?? defaultLocale;
+const copy = await getCopy(locale);
+---
+
+<Page copy={copy} locale={locale} />

@@ -1,0 +1,72 @@
+---
+import Section from '../ui/Section.astro';
+import ChapterContent from '../hud/ChapterContent.astro';
+import Backdrop from '../ui/Backdrop.astro';
+import Placeholder from '../ui/Placeholder.astro';
+import SoundtrackPlayer from '../islands/SoundtrackPlayer.tsx';
+import { plateArt } from '../../config/art';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['soundtrack'];
+  labels: Copy['player'];
+  step: number;
+  /** position of this chapter in the run, for the slash indicators */
+  chapterIndex: number;
+  chapterTotal: number;
+}
+
+const { copy, labels, chapterIndex, chapterTotal } = Astro.props;
+---
+
+<Section id="soundtrack" chapter="soundtrack" label={copy.eyebrow} class="items-center">
+  <Backdrop slot="backdrop" label="soundtrack — moonlit walker" wash="from-slate-600/40 via-slate-deep to-void" />
+
+  <div
+    class="mx-auto grid w-full max-w-[110rem] grid-cols-1 items-center gap-12 px-5 pt-24 pb-20 md:px-12 lg:grid-cols-2"
+  >
+    {/*
+      This chapter flows with the section instead of being pinned, so it sits
+      above the playlist rather than across it.
+    */}
+    <div>
+      <ChapterContent
+        label={copy.eyebrow}
+        title={copy.title}
+        description={copy.body}
+        index={chapterIndex}
+        total={chapterTotal}
+        interactive
+      />
+
+      <SoundtrackPlayer copy={copy} labels={labels} client:visible />
+    </div>
+
+    <div class="relative flex flex-col items-center lg:col-start-2" data-anim="orbit" style="--anim-delay:200ms">
+      <div class="relative w-full max-w-lg">
+        <div
+          class="absolute top-1/2 -right-24 hidden size-80 -translate-y-1/2 rounded-full bg-radial from-neutral-700 to-black ring-1 ring-white/10 lg:block"
+          aria-hidden="true"
+        >
+          <span class="absolute top-1/2 left-1/2 size-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-void ring-1 ring-white/20"></span>
+        </div>
+        <div class="relative bg-white/5 p-3 ring-1 ring-white/15 ring-inset">
+          <Placeholder
+            label={copy.cover}
+            art={plateArt.cover}
+            class="aspect-square w-full"
+            widths={[380, 760]}
+            sizes="(min-width: 1024px) 32rem, 90vw"
+          />
+        </div>
+      </div>
+
+      <a data-shape="slab" 
+ href="#"class="mt-10 inline-flex items-center gap-3 bg-white/10 px-6 py-3 font-display text-xs tracking-[0.3em] text-white uppercase ring-1 ring-white/25 ring-inset transition-colors hover:bg-white/20">
+        <span class="size-4 rounded-full bg-[#1db954]" aria-hidden="true"></span>
+        {copy.spotify}<span class="sr-only">&nbsp;— {copy.title}</span>
+      </a>
+    </div>
+  </div>
+
+</Section>

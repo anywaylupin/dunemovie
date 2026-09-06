@@ -1,0 +1,101 @@
+---
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  nav: Copy['nav'];
+}
+
+const { nav } = Astro.props;
+
+/**
+ * Which section belongs to which marker. The three factions share one, and
+ * anything absent from the map hides the rail entirely — the card-grid
+ * sections are not chapters and get no marker.
+ */
+const ownership = nav.rail.flatMap((marker) =>
+  marker.sections.map((section) => [section, marker.id] as const),
+);
+---
+
+{/*
+  Seven markers, numbered rather than dotted, strung on a hairline. The active
+  one is ringed by a slowly turning scanner — two arcs at different speeds and
+  directions, which is the instrument-panel language the rest of the HUD uses.
+
+  Each link carries its chapter name as real text, visually hidden, so the
+  anchor text is descriptive rather than seven links all called "04".
+*/}
+<nav
+  data-slot="rail"
+  data-visible="true"
+  data-ownership={JSON.stringify(ownership)}
+  class="fixed top-1/2 right-5 z-50 hidden -translate-y-1/2 md:block"
+  aria-label={nav.progressLabel}
+>
+  <ol class="relative flex flex-col items-center gap-6">
+    <span
+      aria-hidden="true"
+      class="absolute inset-y-2 left-1/2 w-px -translate-x-1/2 bg-linear-to-b from-transparent via-white/25 to-transparent"
+    ></span>
+
+    {
+      nav.rail.map((marker, i) => (
+        <li class="relative">
+          <a
+            href={`#${marker.id}`}
+            data-rail-item={marker.id}
+            class="group relative grid size-11 place-items-center font-display text-[0.7rem] tracking-[0.15em] text-white/60 tabular-nums transition-colors duration-300 hover:text-white data-[active]:text-white"
+          >
+            <span aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <span class="sr-only">{marker.label}</span>
+
+            <svg
+              data-part="ring"
+              viewBox="0 0 44 44"
+              aria-hidden="true"
+              class="pointer-events-none absolute inset-0 size-11 opacity-0"
+            >
+              <circle cx="22" cy="22" r="19" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.25" />
+              <circle
+                data-part="arc-outer"
+                cx="22"
+                cy="22"
+                r="19"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1"
+                stroke-linecap="round"
+                pathLength="100"
+              />
+              <circle
+                data-part="arc-inner"
+                cx="22"
+                cy="22"
+                r="15"
+                fill="none"
+                stroke="var(--color-lime)"
+                stroke-width="1"
+                stroke-linecap="round"
+                pathLength="100"
+              />
+            </svg>
+
+            <span
+              data-part="pip"
+              aria-hidden="true"
+              class="pointer-events-none absolute -top-px right-0 size-1.5 rotate-45 bg-lime opacity-0"
+            />
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<p
+  class="fixed right-7 bottom-6 z-50 hidden size-11 rotate-45 place-items-center ring-1 ring-white/25 md:grid"
+>
+  <span class="-rotate-45 font-hud text-[0.65rem] tracking-[0.2em] text-white/70">
+    {nav.language}
+  </span>
+</p>

@@ -1,0 +1,88 @@
+---
+import { Image } from 'astro:assets';
+import Section from '../ui/Section.astro';
+import ChapterCopy from '../ui/ChapterCopy.astro';
+import Backdrop from '../ui/Backdrop.astro';
+import AudioBar from '../ui/AudioBar.astro';
+import { backdropArt, star } from '../../config/art';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['hero'];
+  labels: Copy['player'];
+  step: number;
+}
+
+const { copy, labels, step } = Astro.props;
+---
+
+<Section id="hero" chapter="hero" label={copy.eyebrow} class="items-center">
+  {/*
+    Two backdrop layers, both outside [data-scene] so neither travels with
+    the cross-dissolve. The statue plate is the LCP image on this page, so
+    it is the one thing on the site that loads eagerly at high priority.
+  */}
+  <Backdrop
+    slot="backdrop"
+    label="hero — statue line-up"
+    art={backdropArt.hero}
+    wash="from-slate-deep via-ink to-void"
+    scrim="bottom"
+    parallax={16}
+    feather="bottom"
+    priority
+  />
+
+  {/*
+    The starfield band. One plate and its mirror, so the field is symmetric
+    about the centre line where the statues stand, screened over the plate
+    below and dissolved downward before it reaches them.
+  */}
+  <div
+    slot="backdrop"
+    aria-hidden="true"
+    data-art="star-band"
+    class="pointer-events-none absolute inset-x-0 top-0 -z-10 grid h-[70svh] grid-cols-2 overflow-hidden opacity-70 mix-blend-screen"
+  >
+    <Image
+      src={star}
+      alt=""
+      widths={[512, 1024]}
+      sizes="50vw"
+      loading="eager"
+      decoding="async"
+      class="h-full w-full object-cover object-right-top"
+    />
+    <Image
+      src={star}
+      alt=""
+      widths={[512, 1024]}
+      sizes="50vw"
+      loading="eager"
+      decoding="async"
+      class="h-full w-full -scale-x-100 object-cover object-right-top"
+    />
+  </div>
+
+  <span aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden">
+    <span
+      data-watermark="Dune"
+      class="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-[22vw] leading-none font-bold tracking-[0.1em] uppercase"
+    ></span>
+  </span>
+
+  <ChapterCopy as="h1" title={copy.title} body={copy.body} cta={copy.cta} />
+
+  <div class="absolute inset-x-0 bottom-10 px-5 md:px-12" data-anim="rise" style="--anim-delay:300ms">
+    <div class="mx-auto flex max-w-[110rem] items-center">
+      <div class="hidden w-2xl shrink-0 lg:block"></div>
+      <AudioBar
+        track={copy.player.track}
+        elapsed={copy.player.elapsed}
+        duration={copy.player.duration}
+        labels={labels}
+        class="w-full"
+      />
+    </div>
+  </div>
+</Section>

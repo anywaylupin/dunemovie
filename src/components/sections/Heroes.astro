@@ -1,0 +1,64 @@
+---
+import Section from '../ui/Section.astro';
+import Backdrop from '../ui/Backdrop.astro';
+import SectionLabel from '../hud/SectionLabel.astro';
+import DecryptText from '../ui/DecryptText.astro';
+import Placeholder from '../ui/Placeholder.astro';
+import HeroGallery from '../islands/HeroGallery.tsx';
+import { backdropArt, plateArt } from '../../config/art';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['heroes'];
+  step: number;
+}
+
+const { copy, step } = Astro.props;
+---
+
+<Section id="heroes" label={copy.eyebrow} class="items-center">
+  <Backdrop
+    slot="backdrop"
+    label="heroes — blue planet rise"
+    art={backdropArt.heroes}
+    wash="from-sky-900 via-slate-deep to-void"
+    parallax={20}
+  />
+
+  <span aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden">
+    <span
+      data-watermark="Paul"
+      class="absolute bottom-0 left-6 font-display text-[18vw] leading-[0.8] font-bold uppercase"
+    ></span>
+  </span>
+
+  <div
+    class="mx-auto grid w-full max-w-[110rem] grid-cols-1 items-center gap-12 px-5 pt-28 pb-20 md:px-12 lg:grid-cols-[1fr_26rem]"
+  >
+    <div>
+      <SectionLabel label={copy.eyebrow} step={step} />
+
+      <HeroGallery copy={copy} client:visible />
+    </div>
+
+    <div class="relative">
+      <div data-anim="tilt" style="--anim-delay:200ms">
+        <Placeholder
+          label={copy.featured}
+          art={plateArt.featured}
+          class="mb-8 h-[38svh] w-full lg:h-[46svh]"
+          widths={[420, 840, 1250]}
+          sizes="(min-width: 1024px) 26rem, 100vw"
+        />
+      </div>
+      <DecryptText
+        as="h2"
+        text={copy.quote}
+        class="font-display text-3xl leading-tight font-bold text-white lg:text-4xl"
+      />
+      <p class="mt-5 text-base leading-relaxed text-white/75" data-anim="tilt">
+        {copy.body}
+      </p>
+    </div>
+  </div>
+</Section>

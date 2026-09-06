@@ -1,0 +1,86 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+import Hero from './sections/Hero.astro';
+import About from './sections/About.astro';
+import GreatHouses from './sections/GreatHouses.astro';
+import Factions from './sections/Factions.astro';
+import Heroes from './sections/Heroes.astro';
+import Arrakis from './sections/Arrakis.astro';
+import Caladan from './sections/Caladan.astro';
+import Architecture from './sections/Architecture.astro';
+import Tours from './sections/Tours.astro';
+import Soundtrack from './sections/Soundtrack.astro';
+import Author from './sections/Author.astro';
+import Books from './sections/Books.astro';
+import Comics from './sections/Comics.astro';
+import Media from './sections/Media.astro';
+import Credits from './sections/Credits.astro';
+
+import type { Copy } from '../i18n/copy';
+import type { ChapterEntry } from './hud/Chapter.astro';
+
+interface Props {
+  copy: Copy;
+  locale: string;
+}
+
+const { copy, locale } = Astro.props;
+
+/**
+ * The eyebrow slash marker shows position in the chapter list, so it is
+ * derived from the nav order rather than hard-coded per section.
+ */
+const order = copy.nav.chapters.map((chapter) => chapter.id);
+const step = (id: string) => (order.indexOf(id) % 7) + 1;
+
+/**
+ * Scenes whose copy is painted by the pinned Chapter block. The three
+ * factions are steps inside one section, so they appear here as siblings of
+ * the ordinary sections — the block does not care which is which.
+ */
+const first = (body: string | string[]) => (Array.isArray(body) ? body[0]! : body);
+
+const chapters: ChapterEntry[] = [
+  { id: 'hero', placement: 'bottom', label: copy.hero.eyebrow, title: copy.hero.title, description: copy.hero.body, cta: copy.hero.cta },
+  { id: 'about', label: copy.about.eyebrow, title: copy.about.title, description: first(copy.about.body), cta: copy.about.cta },
+  { id: 'houses', label: copy.houses.eyebrow, title: copy.houses.title, description: copy.houses.body, cta: copy.houses.cta },
+  ...copy.factions.items.map((faction) => ({
+    id: faction.id,
+    label: copy.factions.eyebrow,
+    title: faction.name,
+    description: first(faction.body),
+    cta: copy.factions.cta,
+  })),
+  { id: 'caladan', label: copy.caladan.eyebrow, title: copy.caladan.title, description: first(copy.caladan.body), cta: copy.caladan.cta },
+  // Painted inline by the section itself so it never covers the playlist.
+  { id: 'soundtrack', placement: 'flow', label: copy.soundtrack.eyebrow, title: copy.soundtrack.title, description: copy.soundtrack.body },
+  { id: 'author', label: copy.author.eyebrow, title: copy.author.title, description: first(copy.author.body) },
+];
+
+const chapterIndex = (id: string) => chapters.findIndex((chapter) => chapter.id === id);
+---
+
+<Layout copy={copy} locale={locale} chapters={chapters}>
+  <Hero copy={copy.hero} labels={copy.player} step={step('hero')} />
+  <About copy={copy.about} step={step('about')} />
+  <GreatHouses copy={copy.houses} step={step('houses')} />
+  <Factions copy={copy.factions} />
+  <Heroes copy={copy.heroes} step={step('heroes')} />
+  <Arrakis copy={copy.arrakis} />
+  <Caladan copy={copy.caladan} step={step('caladan')} />
+  <Architecture copy={copy.architecture} />
+  <Tours copy={copy.tours} />
+  <Soundtrack
+    copy={copy.soundtrack}
+    labels={copy.player}
+    step={step('soundtrack')}
+    chapterIndex={chapterIndex('soundtrack')}
+    chapterTotal={chapters.length}
+  />
+  <Author copy={copy.author} step={step('author')} />
+  <Books copy={copy.books} />
+  <Comics copy={copy.comics} />
+  <Media copy={copy.media} />
+  <Credits copy={copy.credits} />
+</Layout>

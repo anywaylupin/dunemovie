@@ -1,0 +1,71 @@
+---
+/**
+ * A framed plate.
+ *
+ * With `art` it renders the real image; without it, the labelled dashed box
+ * it always was. Both paths keep the same box model and the same class
+ * surface, so a section does not have to change shape when its artwork
+ * arrives — binding an id in config/art.ts is the whole change.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  label: string;
+  art?: ImageMetadata;
+  class?: string;
+  /** dims the fill so overlaid text stays readable */
+  muted?: boolean;
+  /** object-fit for the real image; contain keeps a framed poster whole */
+  fit?: 'cover' | 'contain';
+  widths?: number[];
+  sizes?: string;
+}
+
+const {
+  label,
+  art,
+  class: className = '',
+  muted = false,
+  fit = 'cover',
+  widths = [400, 760, 1080],
+  sizes = '(min-width: 1024px) 44rem, 100vw',
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'relative isolate overflow-hidden',
+    art
+      ? ''
+      : 'border border-dashed border-white/15 bg-linear-to-br from-white/10 to-white/[0.02]',
+    className,
+  ]}
+>
+  {
+    art ? (
+      <Image
+        src={art}
+        alt=""
+        widths={widths}
+        sizes={sizes}
+        loading="lazy"
+        decoding="async"
+        class:list={[
+          'h-full w-full',
+          fit === 'contain' ? 'object-contain' : 'object-cover',
+        ]}
+      />
+    ) : (
+      <>
+        <div data-texture="hatch" class="absolute inset-0 opacity-60" />
+        <span class="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 text-center font-hud text-[0.6rem] tracking-[0.35em] text-white/60 uppercase">
+          {label}
+        </span>
+      </>
+    )
+  }
+
+  {muted && <div class="absolute inset-0 bg-void/50"></div>}
+  <slot />
+</div>

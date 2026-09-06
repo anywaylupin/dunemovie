@@ -1,0 +1,10 @@
+dist/
+node_modules/
+.astro/
+.DS_Store
+
+# The soundtrack is licensed music and is not distributed with the project.
+# The folder stays (via .gitkeep) so the build still finds it; drop files in
+# named after a track id and they bind themselves. See README → Audio.
+src/assets/audio/*
+!src/assets/audio/.gitkeep

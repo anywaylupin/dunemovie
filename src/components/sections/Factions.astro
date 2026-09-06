@@ -1,0 +1,152 @@
+---
+import { Image } from 'astro:assets';
+import ChapterCopy from '../ui/ChapterCopy.astro';
+import DecryptText from '../ui/DecryptText.astro';
+import ActionButton from '../ui/ActionButton.astro';
+import FactionArt from '../art/FactionArt.astro';
+import Sigil from '../art/Sigil.astro';
+import { factionWash, tint } from '../../config/visuals';
+import { abstract, vector } from '../../config/art';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['factions'];
+}
+
+const { copy } = Astro.props;
+---
+
+{/*
+  Three factions share one layout, so they share one section. One stage holds
+  all three panels and is held in the frame for the section's whole height;
+  three viewport-height triggers sit behind it as the scroll steps. Scrolling
+  swaps the active panel, cross-fading the artwork and the emblem while the
+  Chapter block retypes the copy.
+
+  Each trigger carries its own id and data-section, so the rail and the
+  chapter block treat the factions as three ordinary destinations.
+
+  The stage is held by ScrollTrigger's pin (data-pin / data-pin-target, the
+  same generic system described in the README) rather than by the
+  `position: sticky` it used to rely on. Sticky cannot work here:
+  ScrollSmoother makes #smooth-wrapper `position: fixed; overflow: hidden`
+  and moves #smooth-content by transform, so the stage's nearest scrollport
+  is a container that never scrolls — there is no scroll for it to stick
+  against, and it simply travelled with the page. The `sticky top-0` below
+  is kept as the fallback for the one case where that is not true: under
+  reduced motion no smoother is created, no pin is created either, and
+  native sticky does the job on its own.
+*/}
+<section
+  data-slot="factions"
+  aria-label={copy.eyebrow}
+  class="relative"
+  style={`height:${copy.items.length * 100}svh`}
+  data-pin
+  data-pin-end="bottom bottom"
+  data-pin-snap={copy.items.length}
+>
+  <div data-pin-target class="sticky top-0 h-svh overflow-hidden">
+    {
+      copy.items.map((faction, i) => (
+        <article
+          data-faction-panel={faction.id}
+          data-active={i === 0 ? 'true' : 'false'}
+          class="group pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 ease-out data-[active=true]:pointer-events-auto data-[active=true]:opacity-100"
+          aria-hidden={i === 0 ? 'false' : 'true'}
+        >
+          <FactionArt id={faction.id} wash={tint(factionWash, faction.id)} />
+
+          <span aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden">
+            <span
+              data-watermark={faction.watermark}
+              class="absolute -top-4 left-0 text-[16vw] leading-none font-bold tracking-[0.08em] uppercase"
+            />
+          </span>
+
+          <div class="mx-auto grid h-full w-full max-w-[110rem] grid-cols-1 items-center gap-10 px-5 pt-28 pb-20 md:px-12 lg:grid-cols-2">
+            <ChapterCopy title={faction.name} body={faction.body} cta={copy.cta} href="#heroes" />
+
+            <div class="relative hidden translate-y-6 flex-col items-center opacity-0 transition-all duration-500 delay-100 group-data-[active=true]:translate-y-0 group-data-[active=true]:opacity-100 lg:col-start-2 lg:flex">
+              {/*
+                Two flare plates behind the mark, both from the original
+                art set: `abstract` is the soft disc it sits in, `vector`
+                the wider shaft of light behind that. Screened, low, and
+                inert — they read as lighting, not as objects.
+              */}
+              <Image
+                src={vector}
+                alt=""
+                widths={[615, 1231]}
+                sizes="46rem"
+                loading="lazy"
+                decoding="async"
+                class="pointer-events-none absolute top-1/2 left-1/2 w-[46rem] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-50 mix-blend-screen"
+              />
+              <Image
+                src={abstract}
+                alt=""
+                widths={[346, 691]}
+                sizes="26rem"
+                loading="lazy"
+                decoding="async"
+                class="pointer-events-none absolute top-1/2 left-1/2 w-[26rem] max-w-none -translate-x-1/2 -translate-y-[58%] opacity-70 mix-blend-screen"
+              />
+
+              <div class="relative grid size-72 place-items-center rounded-full ring-1 ring-white/25">
+                <div class="grid size-56 place-items-center rounded-full bg-white/5 ring-1 ring-white/20 backdrop-blur-[2px]">
+                  <Sigil id={faction.id} class="w-28 text-white drop-shadow-[0_0_25px_rgba(0,0,0,0.55)]" />
+                  <span class="sr-only">
+                    {faction.symbol} {copy.emblem}
+                  </span>
+                </div>
+              </div>
+
+              {/*
+                The slogan plate from the original: the label bracketed by
+                two small squares, the words tracked out beneath it.
+              */}
+              <p
+                class="mt-10 flex items-center gap-2 font-hud text-[0.6rem] tracking-[0.5em] text-white/70 uppercase"
+                aria-hidden="true"
+              >
+                <span class="size-1 rounded-[1px] bg-white" />
+                {copy.sloganLabel}
+                <span class="size-1 rounded-[1px] bg-white" />
+              </p>
+              <DecryptText
+                text={faction.slogan}
+                class="relative mt-3 font-display text-2xl font-semibold tracking-[0.25em] text-white uppercase"
+              />
+
+              <ActionButton
+                label={copy.cta}
+                context={faction.name}
+                variant="outline"
+                class="relative mt-8"
+                href="#heroes"
+              />
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  {/* scroll steps, one viewport each */}
+  <div class="pointer-events-none absolute inset-0 flex flex-col">
+    {
+      copy.items.map((faction) => (
+        <div
+          id={faction.id}
+          data-section={faction.id}
+          data-chapter={faction.id}
+          data-faction-step={faction.id}
+          aria-label={faction.name}
+          tabindex="-1"
+          class="h-svh w-full focus:outline-none"
+        />
+      ))
+    }
+  </div>
+</section>

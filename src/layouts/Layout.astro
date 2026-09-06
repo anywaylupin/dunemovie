@@ -1,0 +1,122 @@
+---
+import '../styles/global.css';
+import TopBar from '../components/hud/TopBar.astro';
+import SideRail from '../components/hud/SideRail.astro';
+import ScrollBar from '../components/hud/ScrollBar.astro';
+import Starfield from '../components/art/Starfield.astro';
+import Chapter from '../components/hud/Chapter.astro';
+import Footer from '../components/sections/Footer.astro';
+import { audioSrc } from '../config/audio';
+import type { ChapterEntry } from '../components/hud/Chapter.astro';
+import type { Copy } from '../i18n/copy';
+
+interface Props {
+  copy: Copy;
+  locale: string;
+  chapters: ChapterEntry[];
+}
+
+const { copy, locale, chapters } = Astro.props;
+
+/**
+ * The playlist, joined here rather than in either surface that shows it:
+ * the words come from the content collection, the URLs from the filenames
+ * in src/assets/audio. A track with no file carries `src: null` and the
+ * transport disables itself for it.
+ */
+const playlist = {
+  startId: copy.soundtrack.nowPlayingId,
+  tracks: copy.soundtrack.tracks.map((track) => ({
+    id: track.id,
+    title: track.title,
+    time: track.time,
+    src: audioSrc(track.id),
+  })),
+};
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={copy.meta.description} />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#04060c" />
+    {/* The project's own mark — the sand-coloured D from the wordmark. The
+        .ico covers browsers that only look for one file. */}
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <link rel="apple-touch-icon" href="/apple-icon.png" />
+    <link rel="canonical" href={Astro.url.href} />
+    <title>{copy.meta.title}</title>
+
+    {/* Reveal animations hide their elements until the observer fires, so
+        they are gated on this flag. No JS means no hiding. */}
+    <script is:inline>
+      document.documentElement.dataset.js = '';
+    </script>
+  </head>
+
+  <body class="bg-void text-white antialiased">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:bg-white focus:px-4 focus:py-3 focus:font-display focus:text-void"
+    >
+      {copy.nav.skip}
+    </a>
+
+    {/* Data, not code: parsed by scripts/audio.ts and by the soundtrack
+        island, whichever runs first. */}
+    <script type="application/json" data-audio-playlist set:html={JSON.stringify(playlist)} is:inline
+    ></script>
+
+    {/* Behind everything, showing through wherever the scenes fade out. */}
+    <Starfield />
+
+    <TopBar nav={copy.nav} />
+    <SideRail nav={copy.nav} />
+    <ScrollBar />
+    <Chapter chapters={chapters} />
+
+    {/*
+      ScrollSmoother requires this exact two-div structure: an outer
+      #smooth-wrapper and a single #smooth-content child holding everything
+      that should scroll. Fixed-position chrome (TopBar, SideRail, the
+      Chapter block, the menu dialog) stays OUTSIDE it on purpose — a fixed
+      element that ends up inside gets transformed along with the scrolled
+      content instead of staying put, which is a well-documented way this
+      plugin's wrapper pattern goes wrong.
+
+      When ScrollSmoother isn't created (reduced motion, or before the
+      script runs at all) these are just two plain block-level divs with no
+      special styling — ScrollSmoother applies its own positioning via JS at
+      runtime, never via CSS here, so the native-scroll fallback path is
+      untouched by this markup existing.
+    */}
+    {/*
+      `relative z-10` puts the scrolled content above the starfield. Explicit
+      ordering rather than a negative z-index on the starfield, which would
+      have put it behind the body background where it could never be seen —
+      and `relative` so the stacking still holds under reduced motion, when
+      ScrollSmoother never sets its own `position: fixed` here.
+    */}
+    <div id="smooth-wrapper" class="relative z-10">
+      <div id="smooth-content">
+        <main id="main" tabindex="-1" class="focus:outline-none">
+          <slot />
+        </main>
+
+        <Footer copy={copy.media} />
+      </div>
+    </div>
+
+    <script>
+      import '../scripts/scroll.ts';
+      import '../scripts/reveal.ts';
+      import '../scripts/gsap.ts';
+      import '../scripts/audio-controls.ts';
+      import '../scripts/drag-scroll.ts';
+    </script>
+  </body>
+</html>

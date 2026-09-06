@@ -1,0 +1,74 @@
+---
+import Section from '../ui/Section.astro';
+import Backdrop from '../ui/Backdrop.astro';
+import { tourVisual } from '../../config/visuals';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['tours'];
+}
+
+const { copy } = Astro.props;
+---
+
+<Section id="tours" label={copy.eyebrow} class="items-center">
+  <Backdrop slot="backdrop" label="tours — city at night" wash="from-void via-ink to-void" />
+
+  <div class="mx-auto w-full max-w-[110rem] px-5 pt-28 pb-20 md:px-12">
+    <ul class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-16">
+      {
+        copy.items.map((tour, i) => (
+          <li class="mx-auto w-full max-w-sm" data-anim="flip" style={`--anim-delay:${i * 120}ms`}>
+            <p class="text-center font-display text-xs tracking-[0.3em] text-white/60">
+              {tour.numeral}
+            </p>
+            <h3 class="mt-2 text-center font-display text-xl font-semibold tracking-[0.1em] text-white">
+              · {tour.title} ·
+            </h3>
+
+            <article class="group relative mt-6">
+              <div
+                class:list={[
+                  'relative aspect-[2/3] w-full overflow-hidden bg-linear-to-b ring-1 ring-white/20',
+                  tourVisual[tour.id]?.poster,
+                ]}
+              >
+                <div data-texture="hatch" class="absolute inset-0 opacity-40"aria-hidden="true"/>
+                <p class="absolute inset-x-4 top-6 text-center font-display text-2xl font-bold tracking-[0.25em] text-white uppercase">
+                  {tour.world}
+                </p>
+                <p class="absolute inset-x-4 bottom-6 text-center font-display text-[0.55rem] leading-relaxed tracking-[0.25em] text-white/70 uppercase">
+                  {copy.note}
+                </p>
+                <button
+                  type="button"
+                  class="absolute top-1/2 left-1/2 grid size-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-void/50 ring-1 ring-white/40 transition-transform duration-500 group-hover:scale-110"
+                  aria-label={tour.title}
+                >
+                  <svg viewBox="0 0 24 24" class="size-5 fill-white" aria-hidden="true">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+              </div>
+
+              <p class="mt-5 text-center font-display text-xl font-semibold text-white">
+                {tour.price}
+              </p>
+
+              <a data-shape="slab" 
+ href="#"class:list={['mt-4 flex items-center justify-center gap-3 px-6 py-3 font-display text-xs tracking-[0.3em] text-void uppercase transition-[filter] hover:brightness-110',
+ tourVisual[tour.id]?.accent,
+ ]}
+ >
+                <svg viewBox="0 0 24 24" class="size-4 fill-current" aria-hidden="true">
+                  <path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8Z" />
+                </svg>
+                {copy.buy}<span class="sr-only">&nbsp;— {tour.title}</span>
+              </a>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Section>

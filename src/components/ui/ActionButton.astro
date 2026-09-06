@@ -1,0 +1,49 @@
+---
+interface Props {
+  label: string;
+  /**
+   * What the link actually leads to. Appended as visually hidden text, so
+   * "Learn more" becomes "Learn more about the Great Houses" for crawlers and
+   * for anyone reading the page's links out of context.
+   */
+  context?: string;
+  href?: string;
+  variant?: 'solid' | 'outline' | 'ticket';
+  /** background utility for solid/ticket, e.g. "bg-accent" */
+  tone?: string;
+  class?: string;
+}
+
+const {
+  label,
+  context,
+  href = '#',
+  variant = 'solid',
+  tone = 'bg-accent',
+  class: className = '',
+} = Astro.props;
+
+const base =
+  'group relative inline-flex items-center gap-3 px-6 py-3 font-display text-xs font-semibold tracking-[0.3em] uppercase transition-colors duration-300';
+
+const tones = {
+  solid: `${tone} text-white hover:brightness-125`,
+  outline: 'text-white bg-white/10 ring-1 ring-white/25 ring-inset hover:bg-white/20',
+  ticket: `${tone} text-void justify-center w-full hover:brightness-110`,
+};
+---
+
+<a data-slot="action-button" data-shape="slab" href={href} class:list={[base, tones[variant], className]}>
+  <span
+    class="grid size-4 shrink-0 place-items-center rounded-full ring-1 ring-current"
+    aria-hidden="true"
+  >
+    <span class="size-1 rounded-full bg-current"></span>
+  </span>
+  {label}{context && <span class="sr-only">&nbsp;{context}</span>}
+  <span class="ml-1 flex gap-[3px]" aria-hidden="true">
+    <span class="h-3 w-[2px] skew-x-[-20deg] bg-current/70"></span>
+    <span class="h-3 w-[2px] skew-x-[-20deg] bg-current/70"></span>
+    <span class="h-3 w-[2px] skew-x-[-20deg] bg-current/70"></span>
+  </span>
+</a>

@@ -1,0 +1,79 @@
+---
+import DecryptText from '../ui/DecryptText.astro';
+
+/** Shared innards for both the pinned block and any in-flow chapter. */
+interface Props {
+  label: string;
+  title: string;
+  description: string;
+  cta?: string;
+  index: number;
+  total: number;
+  /** in-flow chapters are real content; the pinned block is presentational */
+  interactive?: boolean;
+  href?: string;
+}
+
+const {
+  label,
+  title,
+  description,
+  cta,
+  index,
+  total,
+  interactive = false,
+  href = '#',
+} = Astro.props;
+
+const Cta = interactive ? 'a' : 'span';
+---
+
+<div class="flex w-full flex-col gap-5">
+  <div data-slot="chapter-nav" class="flex items-baseline gap-4">
+    <DecryptText
+      as="h3"
+      text={label}
+      class="font-display text-xl font-bold tracking-[0.08em] text-white"
+    />
+    <ul class="flex" aria-hidden="true">
+      {
+        Array.from({ length: total }, (_, slash) => (
+          <li>
+            <svg width="9" height="13" viewBox="0 0 9 13" class="block">
+              <path
+                d="M4 13H0L5.2619 0H9L4 13Z"
+                fill={slash === index ? '#e0272d' : '#ffffff'}
+                opacity={slash < index ? '0.25' : '1'}
+              />
+            </svg>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <DecryptText
+    as="h2"
+    text={title}
+    class="font-display text-4xl leading-[0.95] font-bold text-white sm:text-5xl lg:text-6xl"
+  />
+
+  <p class="max-w-2xl font-display text-base leading-relaxed text-white lg:text-lg">
+    <DecryptText text={description} />
+  </p>
+
+  {
+    cta && (
+      <Cta
+        href={interactive ? href : undefined}
+        data-shape="slab"
+        class="mt-2 inline-flex w-fit items-center gap-3 bg-accent px-6 py-3 font-display text-xs font-semibold tracking-[0.3em] text-white uppercase"
+      >
+        <span class="grid size-4 shrink-0 place-items-center rounded-full ring-1 ring-current">
+          <span class="size-1 rounded-full bg-current" />
+        </span>
+        {cta}
+      </Cta>
+    )
+  }
+</div>

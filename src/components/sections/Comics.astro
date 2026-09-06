@@ -1,0 +1,84 @@
+---
+import { Image } from 'astro:assets';
+import Section from '../ui/Section.astro';
+import DecryptText from '../ui/DecryptText.astro';
+import ActionButton from '../ui/ActionButton.astro';
+import { poster } from '../../config/art';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['comics'];
+}
+
+const { copy } = Astro.props;
+const covers = Array.from({ length: 24 }, (_, i) => i);
+---
+
+<Section id="comics" label={copy.eyebrow} class="items-center">
+  <div
+    slot="backdrop"
+    aria-hidden="true"
+    data-feather="both"
+    class="absolute inset-0 -z-10 overflow-hidden"
+  >
+    <ul class="grid h-full grid-cols-3 gap-3 p-3 [content-visibility:auto] [contain-intrinsic-size:100svh] sm:grid-cols-4 lg:grid-cols-6">
+      {
+        covers.map((i) => (
+          <li
+            class:list={['relative overflow-hidden ring-1 ring-white/10',
+ i % 3 === 0 ?'translate-y-4':'',
+ i > 11 ? 'hidden lg:block' : '',
+            ]}
+          >
+            {/*
+              One plate, twenty-four tiles. The same src every time, so it
+              is a single request; the per-tile hue and saturation shifts
+              are what keep a wall of one cover from reading as a repeat.
+              It all sits under two scrims, so this is texture, not
+              content — hence aria-hidden on the list's own wrapper.
+            */}
+            <Image
+              src={poster}
+              alt=""
+              widths={[190, 380]}
+              sizes="(min-width: 1024px) 16vw, 33vw"
+              loading="lazy"
+              decoding="async"
+              class:list={['h-full w-full object-cover opacity-80',
+ ['saturate-50', 'hue-rotate-15 saturate-75', 'grayscale', 'hue-rotate-[-20deg]'][i % 4],
+              ]}
+            />
+          </li>
+        ))
+      }
+    </ul>
+    <div class="absolute inset-0 bg-void/70"></div>
+    <div class="absolute inset-0 bg-radial from-void via-void/80 to-transparent"></div>
+  </div>
+
+  <div class="mx-auto w-full max-w-[110rem] px-5 pt-28 pb-20 md:px-12">
+    <div
+      class="mx-auto w-full max-w-2xl rounded-full bg-radial from-void via-void/90 to-transparent px-10 py-16 text-center"
+    >
+      <DecryptText
+        as="h2"
+        text={copy.title}
+        class="w-full font-display text-4xl leading-none font-bold text-white lg:text-6xl"
+      />
+
+      <div class="my-7 flex items-center justify-center gap-3" aria-hidden="true">
+        <span class="h-px w-20 bg-white/40"></span>
+        <span class="size-3 rounded-full bg-white"></span>
+        <span class="h-px w-20 bg-white/40"></span>
+      </div>
+
+      <p class="mx-auto max-w-md text-sm leading-relaxed text-white/75 lg:text-base" data-anim="iris">
+        {copy.body}
+      </p>
+
+      <div data-anim="rise" style="--anim-delay:150ms">
+        <ActionButton label={copy.cta} context={copy.title} variant="outline" class="mt-8" />
+      </div>
+    </div>
+  </div>
+</Section>

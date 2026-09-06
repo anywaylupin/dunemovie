@@ -1,0 +1,62 @@
+---
+import Section from '../ui/Section.astro';
+import Backdrop from '../ui/Backdrop.astro';
+import { bookVisual } from '../../config/visuals';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['books'];
+}
+
+const { copy } = Astro.props;
+---
+
+<Section id="books" label={copy.eyebrow} auto class="flex items-center">
+  <Backdrop slot="backdrop" label="books — deep field" wash="from-void via-ink to-void" />
+
+  <div class="mx-auto w-full max-w-[110rem] px-5 pt-24 pb-20 md:px-12">
+    <ul class="grid grid-cols-1 gap-12 sm:grid-cols-3 sm:gap-8">
+      {
+        copy.items.map((book, i) => (
+          <li
+            class:list={['mx-auto w-full max-w-[13rem]', bookVisual[book.id]?.offset]}
+            data-anim="mask-up"
+            style={`--anim-delay:${i * 150}ms`}
+          >
+            <div class="relative">
+              <span
+                class="absolute -top-10 left-1/2 h-px w-40 -translate-x-1/2 bg-linear-to-r from-transparent via-cyan to-transparent"
+                aria-hidden="true"
+              />
+              <div
+                class:list={[
+                  'relative aspect-[2/3] w-full overflow-hidden bg-linear-to-b ring-1 ring-white/15',
+                  bookVisual[book.id]?.cover,
+                ]}
+              >
+                <div data-texture="hatch" class="absolute inset-0 opacity-40"aria-hidden="true"/>
+                <p class="absolute inset-x-3 bottom-8 text-center font-display text-2xl leading-none font-bold tracking-[0.1em] text-white uppercase">
+                  {book.title}
+                </p>
+                <p class="absolute inset-x-3 bottom-4 text-center font-display text-[0.55rem] tracking-[0.4em] text-white/70 uppercase">
+                  {copy.author}
+                </p>
+              </div>
+            </div>
+
+            <a data-shape="slab" 
+ href="#"class:list={['mt-5 flex items-center justify-center gap-3 px-5 py-2.5 font-display text-[0.7rem] tracking-[0.3em] text-void uppercase transition-[filter] hover:brightness-110',
+ bookVisual[book.id]?.accent,
+ ]}
+ >
+              <svg viewBox="0 0 24 24" class="size-4 fill-current" aria-hidden="true">
+                <path d="M4 4h7v16H4zm9 0h7v16h-7z" />
+              </svg>
+              {copy.read}<span class="sr-only">&nbsp;— {book.title}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Section>

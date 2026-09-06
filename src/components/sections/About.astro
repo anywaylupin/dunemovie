@@ -1,0 +1,102 @@
+---
+import { Image } from 'astro:assets';
+import Section from '../ui/Section.astro';
+import ChapterCopy from '../ui/ChapterCopy.astro';
+import Backdrop from '../ui/Backdrop.astro';
+import Placeholder from '../ui/Placeholder.astro';
+import { backdropArt, plateArt, posterBase } from '../../config/art';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['about'];
+  step: number;
+}
+
+const { copy, step } = Astro.props;
+---
+
+{/*
+  One screen, laid out as the original: the burning city full-bleed, a single
+  oversized letter at the top left, and the framed poster standing at full
+  height against the right edge.
+
+  This used to be a 170svh section with the poster pinned across the extra
+  height. That was a scroll-through the original never had — it made About
+  the one scene you passed through rather than arrived at — so the height and
+  the pin are gone and the poster simply stands in the frame.
+*/}
+<Section id="about" chapter="about" label={copy.eyebrow} class="relative items-center">
+  <Backdrop
+    slot="backdrop"
+    label="about — burning city"
+    art={backdropArt.about}
+    wash="from-ink via-slate-deep to-void"
+    parallax={20}
+  />
+
+  {/* The lone "A" from the original, set in the same titling face as the
+      other watermarks and knocked back so it reads as embossing. */}
+  <span aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden">
+    <span
+      data-watermark="A"
+      class="absolute -top-[0.12em] left-6 text-[34vw] leading-none font-bold tracking-[0.08em] uppercase opacity-30 md:left-10"
+    ></span>
+  </span>
+
+  <ChapterCopy title={copy.title} body={copy.body} cta={copy.cta} />
+
+  {/*
+    Anchored to the right edge on desktop, centred below it — at that width
+    the pinned Chapter block takes the whole screen, so an off-centre poster
+    would sit under the paragraph rather than beside it.
+
+    Full section height on desktop, as in the original — the offsets are
+    zero at `lg` so the frame is exactly as tall as the scene, and only
+    smaller screens inset it to leave room for the chapter text.
+
+    The height comes from the top/bottom offsets and the width from the
+    aspect ratio, rather than from `h-full` on a flex child. That matters:
+    a percentage height only resolves against a parent with a definite one,
+    and `items-center` leaves the child content-sized, so the frame
+    collapsed to 0×0 — which also meant the lazy image was never fetched and
+    the zero-area box could never satisfy the reveal observer's threshold.
+    Centring is `inset-x-0 mx-auto` rather than a translate for a related
+    reason: [data-anim] animates `transform`, so a translate-based centring
+    would be overwritten mid-reveal.
+
+    `rise` and not `mask-up`: mask-up hides its element behind
+    `clip-path: inset(100% 0 0 0)`, which is a total blackout for anything
+    whose reveal does not fire. A translate that fails to fire leaves the
+    poster visible and 2.5rem low; a clip-path that fails to fire leaves no
+    poster at all. Not a trade worth making for the frame this sits in.
+  */}
+  <div
+    class="pointer-events-none absolute inset-x-0 inset-y-12 mx-auto aspect-760/1080 sm:inset-y-8 lg:inset-y-0 lg:right-[8%] lg:left-auto lg:mx-0"
+    data-anim="rise"
+    style="--anim-delay:150ms"
+  >
+    <Placeholder
+      label={copy.poster}
+      art={plateArt.poster}
+      fit="contain"
+      class="h-full w-full"
+      widths={[380, 760, 1140]}
+      sizes="(min-width: 1024px) 34rem, 60vw"
+    >
+      {/*
+        The plinth the poster stands on. Positioned as a fraction of the
+        frame so it stays under the artwork at every height, and inside the
+        Placeholder's own box so it travels with the reveal.
+      */}
+      <Image
+        src={posterBase}
+        alt=""
+        width={336}
+        height={13}
+        loading="lazy"
+        decoding="async"
+        class="absolute bottom-[4.5%] left-1/2 w-[44%] -translate-x-1/2"
+      />
+    </Placeholder>
+  </div>
+</Section>

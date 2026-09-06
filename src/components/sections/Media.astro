@@ -1,0 +1,47 @@
+---
+import Section from '../ui/Section.astro';
+import Backdrop from '../ui/Backdrop.astro';
+import { mediaTint, tint } from '../../config/visuals';
+import type { Copy } from '../../i18n/copy';
+
+interface Props {
+  copy: Copy['media'];
+}
+
+const { copy } = Astro.props;
+const networks = ['Facebook', 'Instagram', 'Twitter'];
+---
+
+<Section id="media" label={copy.eyebrow} class="items-center">
+  <Backdrop slot="backdrop" label="media — gradient wash" wash="from-void via-ink to-slate-deep" />
+
+  <div class="mx-auto w-full max-w-[110rem] px-5 pt-32 pb-24 md:px-12">
+    <ul class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      {
+        copy.items.map((item, i) => (
+          <li data-anim="slide-right" style={`--anim-delay:${i * 120}ms`}>
+            <a href="#" class="group block">
+              <span class="sr-only">{item.kind}: {item.title}</span>
+              <div
+                class:list={[
+                  'relative aspect-video w-full overflow-hidden bg-linear-to-br ring-1 ring-white/15',
+                  tint(mediaTint, item.id),
+                ]}
+              >
+                <div data-texture="hatch" class="absolute inset-0 opacity-40"aria-hidden="true"/>
+                <span class="absolute inset-0 grid place-items-center font-display text-sm tracking-[0.4em] text-white/80 uppercase">
+                  {item.title}
+                </span>
+                <span class="absolute inset-0 transition-colors duration-500 group-hover:bg-void/30" />
+              </div>
+              <p class="mt-3 font-display text-[0.6rem] tracking-[0.4em] text-white/60 uppercase">
+                {item.kind}
+              </p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+</Section>

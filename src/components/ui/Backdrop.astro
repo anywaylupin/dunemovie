@@ -1,0 +1,142 @@
+---
+/**
+ * Full-bleed section background.
+ *
+ * A stack, bottom to top: the photograph, the orbital-line overlay, the
+ * colour wash, and a readability scrim. `art` is optional — without it this
+ * renders exactly what it used to, a gradient and a label, so a section
+ * with no artwork yet still looks deliberate rather than broken.
+ *
+ * The plate is deliberately taller than the section (`-inset-y-[10%]`) when
+ * `parallax` is on: GSAP shifts it as the section crosses the viewport, and
+ * that overhang is the travel it moves through. Without the overhang the
+ * drift would expose the section edge.
+ */
+import { Image } from 'astro:assets';
+import type { BackdropArt } from '../../config/art';
+
+interface Props {
+  label: string;
+  art?: BackdropArt;
+  /** Tailwind gradient stop list, laid over the photograph */
+  wash?: string;
+  /** darkens the side the chapter copy is read against */
+  scrim?: 'left' | 'bottom' | 'none';
+  /** vertical drift in percent, scrubbed to scroll by scripts/gsap.ts */
+  parallax?: number;
+  /**
+   * How the plate resolves at the section's edges. `both` is right for
+   * everything with a neighbour above and below; the hero uses `bottom`
+   * because nothing sits above it and its starfield band lives up there.
+   */
+  feather?: 'both' | 'bottom' | 'none';
+  /** above-the-fold backdrops should not lazy-load */
+  priority?: boolean;
+  class?: string;
+}
+
+const {
+  label,
+  art,
+  wash = 'from-slate-deep via-ink to-void',
+  scrim = 'left',
+  parallax = 0,
+  feather = 'both',
+  priority = false,
+  class: className = '',
+} = Astro.props;
+
+const scrims = {
+  left: 'bg-linear-to-r from-void via-void/40 to-transparent',
+  bottom: 'bg-linear-to-t from-void via-void/40 to-transparent',
+  none: '',
+};
+
+// A photograph carries the section on its own, so the wash drops back to a
+// tint over it. With no photograph the wash *is* the background and has to
+// stay at full strength.
+const washOpacity = art
+  ? Math.min(1, (100 - (art.strength ?? 100)) / 100 + 0.28)
+  : 1;
+---
+
+{/*
+  The section keeps its own frame: the artwork here never fades out, it is
+  only feathered at the top and bottom edges so neighbouring scenes meet in
+  darkness instead of at a line. `isolate` keeps the screen-blended orbital
+  lines composing against this stack and nothing behind it.
+*/}
+<div
+  data-feather={feather === 'none' ? undefined : feather}
+  class:list={['absolute inset-0 -z-10 isolate overflow-hidden', className]}
+>
+  {
+    art && (
+      <div
+        class:list={['absolute inset-x-0', parallax ? '-inset-y-[14%]' : 'inset-y-0']}
+        data-parallax={parallax || undefined}
+      >
+        <Image
+          src={art.image}
+          alt=""
+          widths={[640, 1024, 1536, 1920]}
+          sizes="100vw"
+          loading={priority ? 'eager' : 'lazy'}
+          decoding={priority ? 'sync' : 'async'}
+          fetchpriority={priority ? 'high' : 'auto'}
+          class="h-full w-full object-cover"
+          style={`object-position:${art.position ?? 'center'}`}
+        />
+      </div>
+    )
+  }
+
+  {/*
+    The orbital lines are the one motif carried across every scene, so they
+    sit above the photograph but below the wash — they read as an overlay on
+    the image, not as part of the page chrome.
+
+    They travel the *opposite* way to the photograph, and further. Two layers
+    moving apart is what actually reads as parallax; a backdrop where
+    everything drifts together just reads as a backdrop that is slightly
+    late. This is the depth cue on the page you are most likely to notice.
+  */}
+  {
+    art?.circles && (
+      <div
+        class:list={['pointer-events-none absolute inset-x-0', parallax ? '-inset-y-[16%]' : 'inset-y-0']}
+        data-parallax={parallax ? -Math.round(parallax * 0.7) : undefined}
+      >
+      <Image
+        src={art.circles}
+        alt=""
+        widths={[768, 1280, 1920]}
+        sizes="100vw"
+        loading="lazy"
+        decoding="async"
+        class="h-full w-full object-cover opacity-40 mix-blend-screen"
+      />
+      </div>
+    )
+  }
+
+  <div
+    class:list={['absolute inset-0 bg-linear-to-b', wash]}
+    style={`opacity:${washOpacity}`}
+  >
+  </div>
+
+  <div data-texture="hatch" class:list={['absolute inset-0', art ? 'opacity-10' : 'opacity-25']}>
+  </div>
+
+  {scrim !== 'none' && <div class:list={['absolute inset-0', scrims[scrim]]} />}
+
+  {/* Only meaningful while a scene is still waiting for its artwork. */}
+  {
+    !art && (
+      <span class="absolute bottom-4 left-1/2 -translate-x-1/2 font-hud text-[0.55rem] tracking-[0.4em] text-white/60 uppercase">
+        {label}
+      </span>
+    )
+  }
+</div>
