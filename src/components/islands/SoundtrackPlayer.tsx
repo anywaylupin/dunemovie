@@ -5,7 +5,7 @@ import type { Copy } from '../../i18n/copy';
 
 /**
  * Exactly what a freshly-created store reports, which is exactly what the
- * server renders — the server has no playlist and no element, so it can
+ * server renders - the server has no playlist and no element, so it can
  * only ever produce this.
  */
 const IDLE: PlayerState = {
@@ -21,15 +21,15 @@ const IDLE: PlayerState = {
  * Subscribes this component to the shared player.
  *
  * Hand-rolled rather than `useSyncExternalStore`, which preact only ships in
- * `preact/compat` — and this project runs the Preact integration with
+ * `preact/compat` - and this project runs the Preact integration with
  * `compat: false`, so pulling it in would drag the React shim into the
  * bundle to save six lines.
  *
  * **The first client render deliberately reports the idle state, not the
  * real one.** Preact's `hydrate()` adopts the server's DOM without applying
  * props: it trusts that the markup already matches. If this component's
- * first render described the live store — a different current track, rows
- * that are no longer disabled — that description would be recorded as the
+ * first render described the live store - a different current track, rows
+ * that are no longer disabled - that description would be recorded as the
  * vnode while the DOM still said otherwise, and every later render would
  * match that vnode and produce no diff. The markup would stay frozen at the
  * server's version for the life of the page. (It is not hypothetical: with
@@ -106,7 +106,7 @@ function Waveform({ bars = 90, progress = 0 }: { bars?: number; progress?: numbe
  * Island 3 of 3. Hydrates when it scrolls into view.
  *
  * A view onto the shared player in scripts/audio.ts, not a player of its
- * own — the hero's transport drives the same element, so picking a track
+ * own - the hero's transport drives the same element, so picking a track
  * here changes what the hero bar says, and vice versa. The store is the
  * single source of truth; this component holds no playback state at all.
  */

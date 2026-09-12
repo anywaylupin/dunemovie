@@ -12,7 +12,7 @@ const { copy } = Astro.props;
 ---
 
 <Section id="books" label={copy.eyebrow} auto class="flex items-center">
-  <Backdrop slot="backdrop" label="books — deep field" wash="from-void via-ink to-void" />
+  <Backdrop slot="backdrop" label="books - deep field" wash="from-void via-ink to-void" />
 
   <div class="mx-auto w-full max-w-[110rem] px-5 pt-24 pb-20 md:px-12">
     <ul class="grid grid-cols-1 gap-12 sm:grid-cols-3 sm:gap-8">
@@ -52,7 +52,7 @@ const { copy } = Astro.props;
               <svg viewBox="0 0 24 24" class="size-4 fill-current" aria-hidden="true">
                 <path d="M4 4h7v16H4zm9 0h7v16h-7z" />
               </svg>
-              {copy.read}<span class="sr-only">&nbsp;— {book.title}</span>
+              {copy.read}<span class="sr-only">&nbsp;- {book.title}</span>
             </a>
           </li>
         ))

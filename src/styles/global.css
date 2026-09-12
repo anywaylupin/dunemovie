@@ -10,10 +10,10 @@
 
 /* The two faces the design is actually built on. Both are local files under
    src/assets/fonts, so Vite hashes and fingerprints them like any other
-   asset — no third-party request here either.
+   asset - no third-party request here either.
 
    Dune Rise is a titling face: wide, all-caps, one weight, and no `%` or
-   `~` in its cmap. It is used only where those limits do not bite — the
+   `~` in its cmap. It is used only where those limits do not bite - the
    wordmark, the oversized watermarks, the faction slogans. Body copy and
    anything needing 600/700 stays on Saira Condensed, which has the weights
    Dune Rise does not.
@@ -40,6 +40,9 @@
    Tokens
    --------------------------------------------------------------- */
 @theme {
+  --font-dune-rise: 'Dune Rise', ui-sans-serif, sans-serif;
+  --font-agency-fb: 'Agency FB', ui-sans-serif, sans-serif;
+
   --font-display: 'Saira Condensed', 'Arial Narrow', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Saira Condensed', 'Arial Narrow', ui-sans-serif, system-ui, sans-serif;
   --font-title: 'Dune Rise', 'Agency FB', 'Saira Condensed', ui-sans-serif, sans-serif;
@@ -73,18 +76,46 @@
 [data-shape='slab-left'] {
   clip-path: polygon(1.25rem 0, 100% 0, 100% 100%, 0 100%);
 }
+/* ---------------------------------------------------------------
+   The call to action.
+
+   One drawing in two layers (see hud/ChapterContent.astro), cut along the
+   diagonal that runs down the gap between the slab's chamfered tip and the
+   first slash. Both edges of that gap slant the same way - 16.37 across for
+   every 40 up - so the cut is parallel to them and passes through nothing:
+   at rest the two halves are the original image, pixel for pixel.
+
+   Hovering grows the slashes away from the slab and leaves the slab alone. A
+   uniform scale rather than a stretch, so the slant stays at the angle the
+   rest of the artwork is drawn at, and about the slashes' own centre so they
+   spread rather than march sideways.
+   --------------------------------------------------------------- */
+[data-slot='cta-slab'] [data-part='slab'] {
+  clip-path: polygon(0 0, 81.3% 0, 65.7% 100%, 0 100%);
+}
+
+[data-slot='cta-slab'] [data-part='slashes'] {
+  clip-path: polygon(81.3% 0, 100% 0, 100% 100%, 65.7% 100%);
+  transform-origin: 79% 50%;
+  transition: transform 400ms var(--ease-out-expo);
+}
+
+[data-slot='cta-slab']:hover [data-part='slashes'],
+[data-slot='cta-slab']:focus-visible [data-part='slashes'] {
+  transform: scale(1.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-slot='cta-slab'] [data-part='slashes'] {
+    transition: none;
+  }
+}
+
 [data-shape='card'] {
   clip-path: polygon(14% 0, 100% 0, 86% 100%, 0 100%);
 }
 [data-shape='notch'] {
-  clip-path: polygon(
-    0 0,
-    calc(100% - 1rem) 0,
-    100% 1rem,
-    100% 100%,
-    1rem 100%,
-    0 calc(100% - 1rem)
-  );
+  clip-path: polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 1rem 100%, 0 calc(100% - 1rem));
 }
 
 [data-texture='hatch'] {
@@ -96,7 +127,7 @@
 }
 
 /* Oversized background lettering. Rendered as generated content so there
-   is no text node for a contrast audit to fail — it is pure decoration.
+   is no text node for a contrast audit to fail - it is pure decoration.
 
    Set in Dune Rise and filled with a top-down fade rather than a flat
    tint, so the letterforms read as light falling off them instead of as
@@ -105,16 +136,19 @@
    so it tracks the (viewport-relative) type size. */
 [data-watermark]::after {
   content: attr(data-watermark);
-  font-family: var(--font-title);
-  background-image: linear-gradient(
-    180deg,
-    color-mix(in oklab, white 22%, transparent) 0%,
-    transparent 86%
-  );
-  -webkit-background-clip: text;
+  font-family: var(--font-dune-rise);
+  -webkit-text-stroke-width: 10px;
+  -webkit-text-stroke-color: #000;
+  font-size: 500px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 50px;
+  opacity: 0.03;
+  background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0) 85.73%);
   background-clip: text;
-  color: transparent;
-  -webkit-text-stroke: 0.012em color-mix(in oklab, black 45%, transparent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* ---------------------------------------------------------------
@@ -160,12 +194,7 @@
   z-index: 2;
   border-radius: inherit;
   background:
-    radial-gradient(
-      circle at 76% 78%,
-      rgba(0, 0, 0, 0.8) 0%,
-      rgba(0, 0, 0, 0.38) 32%,
-      rgba(0, 0, 0, 0) 64%
-    ),
+    radial-gradient(circle at 76% 78%, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.38) 32%, rgba(0, 0, 0, 0) 64%),
     radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 56%, rgba(0, 0, 0, 0.6) 100%);
 }
 
@@ -191,7 +220,7 @@
 
    Every backdrop is a stack: the photograph, an orbital-line overlay, a
    colour wash, and a readability scrim. The masks below are what stop a
-   half-frame portrait from ending in a hard vertical edge — they are the
+   half-frame portrait from ending in a hard vertical edge - they are the
    one piece of that stack CSS has to own, since the shape depends on which
    side the plate sits on.
    --------------------------------------------------------------- */
@@ -217,21 +246,15 @@
    Deliberately narrow (8%). An earlier version used 18% and dissolved the
    backdrops to nothing across the overlap as well; that read as the space
    swallowing the scene rather than sitting between scenes, and each section
-   stopped owning its own frame. The band is the transition — the section
+   stopped owning its own frame. The band is the transition - the section
    is not.
    --------------------------------------------------------------- */
 [data-feather='both'] {
-  -webkit-mask-image: linear-gradient(
-    180deg,
-    transparent 0%,
-    #000 8%,
-    #000 92%,
-    transparent 100%
-  );
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
   mask-image: linear-gradient(180deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
 }
 
-/* For the hero, whose top edge is the top of the page — there is nothing
+/* For the hero, whose top edge is the top of the page - there is nothing
    above it to blend into, and its own starfield band lives up there. */
 [data-feather='bottom'] {
   -webkit-mask-image: linear-gradient(180deg, #000 88%, transparent 100%);
@@ -263,6 +286,7 @@
     color: white;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* Anchor jumps ease rather than teleport. No scroll library involved. */
@@ -297,8 +321,8 @@
 
    Unrelated to the section cross-dissolve below: this covers individual
    elements inside a section (a heading, a card); GSAP in scripts/gsap.ts
-   covers each section's content block as a whole. The two compose — a
-   data-anim child moves relative to its already-moving data-scene parent —
+   covers each section's content block as a whole. The two compose - a
+   data-anim child moves relative to its already-moving data-scene parent -
    without conflict, since they never target the same element.
    --------------------------------------------------------------- */
 @media (prefers-reduced-motion: no-preference) {
@@ -407,8 +431,8 @@
    window and artwork meant to run to the edge does not. The replacement is
    `position: fixed` and overlays the content, so it costs no width.
 
-   Only the root scroller is hidden. Inner scrollers — the Great Houses
-   carousel — keep theirs, because there it is the affordance that says the
+   Only the root scroller is hidden. Inner scrollers - the Great Houses
+   carousel - keep theirs, because there it is the affordance that says the
    row can be dragged.
    --------------------------------------------------------------- */
 html {
@@ -423,7 +447,7 @@ html::-webkit-scrollbar {
 /* The one place an inner scrollbar is still wanted: the Great Houses
    carousel, where it is the affordance that says the row can be moved.
    Dressed to match the page scrollbar rather than left as browser
-   furniture — a 3px hairline that lights up on hover. */
+   furniture - a 3px hairline that lights up on hover. */
 [data-slot='carousel'] {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in oklab, white 40%, transparent) transparent;
@@ -516,7 +540,7 @@ dialog[data-slot='menu'][open]::backdrop {
 /* ---------------------------------------------------------------
    Section cross-dissolve and the faction cross-fade.
 
-   These are GSAP's, not CSS's — see scripts/gsap.ts. ScrollTrigger scrubs
+   These are GSAP's, not CSS's - see scripts/gsap.ts. ScrollTrigger scrubs
    [data-scene] and [data-faction-panel] to scroll position directly via
    inline styles, gated on prefers-reduced-motion through gsap.matchMedia().
 
@@ -559,9 +583,6 @@ dialog[data-slot='menu'][open]::backdrop {
   }
   [data-slot='menu-trigger']:hover [data-part='bar']:last-child {
     transform: translateY(2px) scaleX(0.7);
-  }
-  [data-slot='menu-trigger']:hover [data-part='word'] {
-    letter-spacing: 0.55em;
   }
 
   [data-slot='menu-trigger']:active [data-part='frame'] {
@@ -623,7 +644,7 @@ dialog[data-slot='menu'][open]::backdrop {
 }
 
 /* ---------------------------------------------------------------
-   Chapter block. Only opacity is ever transitioned — position is set per
+   Chapter block. Only opacity is ever transitioned - position is set per
    panel and applied instantly, so nothing slides between placements.
    --------------------------------------------------------------- */
 [data-slot='chapter'],
@@ -648,11 +669,14 @@ dialog[data-slot='menu'][open]::backdrop {
    Chapter rail.
 
    The rail only exists for the seven chaptered destinations; on any other
-   section it is hidden — visibility rather than opacity alone, so its links
+   section it is hidden - visibility rather than opacity alone, so its links
    leave the focus order with it.
 
-   The active marker is ringed by a scanner: two arcs turning at different
-   speeds in opposite directions. Transform and stroke only, so it composites
+   The active marker is ringed by the time.svg instrument (see
+   hud/SideRail.astro): dashed ring, swept arc, lime diamond, edge ticks. The
+   number stays put inside it and the arc turns anticlockwise around it -
+   against the reading direction, so it registers as an instrument sweeping
+   rather than as the number itself spinning. Transform only, so it composites
    without touching layout.
    --------------------------------------------------------------- */
 [data-slot='rail'] {
@@ -666,39 +690,36 @@ dialog[data-slot='menu'][open]::backdrop {
   visibility: hidden;
 }
 
-[data-rail-item] [data-part='ring'],
-[data-rail-item] [data-part='pip'] {
+[data-rail-item] [data-part='marker'] {
   transition: opacity 400ms var(--ease-out-expo);
 }
 
-[data-rail-item] [data-part='arc-outer'] {
-  stroke-dasharray: 26 74;
-}
-
-[data-rail-item] [data-part='arc-inner'] {
-  stroke-dasharray: 8 92;
-}
-
-[data-rail-item] [data-part='arc-outer'],
-[data-rail-item] [data-part='arc-inner'] {
-  transform-origin: center;
-}
-
-[data-rail-item][data-active] [data-part='ring'],
-[data-rail-item][data-active] [data-part='pip'] {
+[data-rail-item][data-active] [data-part='marker'] {
   opacity: 1;
 }
 
-[data-rail-item]:hover [data-part='ring'] {
+[data-rail-item]:hover [data-part='marker'] {
   opacity: 0.35;
 }
 
+[data-rail-item][data-active]:hover [data-part='marker'] {
+  opacity: 1;
+}
+
+/* Diamond, arc and ticks turn as one part around the ring's centre, which the
+   drawing puts at (24, 29) of its own viewBox rather than at the centre of its
+   bounding box - hence the explicit origin and the view-box reference. A whole
+   turn, so the sweep looks the same at rest as it does mid-cycle: under
+   reduced motion, or on a marker that is not the active one, it simply stays
+   where the file drew it. */
+[data-rail-item] [data-part='sweep'] {
+  transform-box: view-box;
+  transform-origin: 24px 29px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  [data-rail-item][data-active] [data-part='arc-outer'] {
-    animation: rail-scan 7s linear infinite;
-  }
-  [data-rail-item][data-active] [data-part='arc-inner'] {
-    animation: rail-scan 11s linear infinite reverse;
+  [data-rail-item][data-active] [data-part='sweep'] {
+    animation: rail-scan 9s linear infinite;
   }
 }
 
@@ -707,6 +728,6 @@ dialog[data-slot='menu'][open]::backdrop {
     transform: rotate(0deg);
   }
   to {
-    transform: rotate(360deg);
+    transform: rotate(-360deg);
   }
 }

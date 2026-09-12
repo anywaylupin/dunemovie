@@ -20,7 +20,7 @@ const { copy, labels, chapterIndex, chapterTotal } = Astro.props;
 ---
 
 <Section id="soundtrack" chapter="soundtrack" label={copy.eyebrow} class="items-center">
-  <Backdrop slot="backdrop" label="soundtrack — moonlit walker" wash="from-slate-600/40 via-slate-deep to-void" />
+  <Backdrop slot="backdrop" label="soundtrack - moonlit walker" wash="from-slate-600/40 via-slate-deep to-void" />
 
   <div
     class="mx-auto grid w-full max-w-[110rem] grid-cols-1 items-center gap-12 px-5 pt-24 pb-20 md:px-12 lg:grid-cols-2"
@@ -64,7 +64,7 @@ const { copy, labels, chapterIndex, chapterTotal } = Astro.props;
       <a data-shape="slab" 
  href="#"class="mt-10 inline-flex items-center gap-3 bg-white/10 px-6 py-3 font-display text-xs tracking-[0.3em] text-white uppercase ring-1 ring-white/25 ring-inset transition-colors hover:bg-white/20">
         <span class="size-4 rounded-full bg-[#1db954]" aria-hidden="true"></span>
-        {copy.spotify}<span class="sr-only">&nbsp;— {copy.title}</span>
+        {copy.spotify}<span class="sr-only">&nbsp;- {copy.title}</span>
       </a>
     </div>
   </div>

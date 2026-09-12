@@ -37,7 +37,7 @@ const step = (id: string) => (order.indexOf(id) % 7) + 1;
 /**
  * Scenes whose copy is painted by the pinned Chapter block. The three
  * factions are steps inside one section, so they appear here as siblings of
- * the ordinary sections — the block does not care which is which.
+ * the ordinary sections - the block does not care which is which.
  */
 const first = (body: string | string[]) => (Array.isArray(body) ? body[0]! : body);
 

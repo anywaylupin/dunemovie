@@ -1,6 +1,6 @@
 /**
  * Colour and placement tokens, keyed by the same ids used in
- * src/content/copy/*.json. Translations carry words only — a French
+ * src/content/copy/*.json. Translations carry words only - a French
  * copy file should never have to repeat a gradient.
  */
 

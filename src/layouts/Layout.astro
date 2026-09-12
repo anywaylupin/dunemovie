@@ -1,11 +1,13 @@
 ---
 import '../styles/global.css';
+
+// Front to back, the same order they are written in the body below.
 import TopBar from '../components/hud/TopBar.astro';
-import SideRail from '../components/hud/SideRail.astro';
 import ScrollBar from '../components/hud/ScrollBar.astro';
-import Starfield from '../components/art/Starfield.astro';
+import SideRail from '../components/hud/SideRail.astro';
 import Chapter from '../components/hud/Chapter.astro';
 import Footer from '../components/sections/Footer.astro';
+import Starfield from '../components/art/Starfield.astro';
 import { audioSrc } from '../config/audio';
 import type { ChapterEntry } from '../components/hud/Chapter.astro';
 import type { Copy } from '../i18n/copy';
@@ -30,8 +32,8 @@ const playlist = {
     id: track.id,
     title: track.title,
     time: track.time,
-    src: audioSrc(track.id),
-  })),
+    src: audioSrc(track.id)
+  }))
 };
 ---
 
@@ -43,22 +45,46 @@ const playlist = {
     <meta name="description" content={copy.meta.description} />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#04060c" />
-    {/* The project's own mark — the sand-coloured D from the wordmark. The
-        .ico covers browsers that only look for one file. */}
+    {
+      /* The project's own mark - the sand-coloured D from the wordmark. The
+        .ico covers browsers that only look for one file. */
+    }
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/icon.png" />
     <link rel="apple-touch-icon" href="/apple-icon.png" />
     <link rel="canonical" href={Astro.url.href} />
     <title>{copy.meta.title}</title>
 
-    {/* Reveal animations hide their elements until the observer fires, so
-        they are gated on this flag. No JS means no hiding. */}
+    {
+      /* Reveal animations hide their elements until the observer fires, so
+        they are gated on this flag. No JS means no hiding. */
+    }
     <script is:inline>
       document.documentElement.dataset.js = '';
     </script>
   </head>
 
-  <body class="bg-void text-white antialiased">
+  {/*
+    Everything in the body is ordered by its z-index, front to back: the skip
+    link (100), the top bar (70), the scrollbar (60), the rail (50), the
+    chapter block (40), the scrolled content (10), the starfield (behind it
+    all). Nothing here depends on source order for its stacking - every one of
+    them names a layer - so the order is free to be the one that makes the
+    document readable, and a layer is easier to find in the inspector when the
+    tree is a picture of the stack.
+
+    Front to back rather than back to front, because it is also the order the
+    page should be read and tabbed in: skip link, then the navigation, then
+    the content. The one place the two orders would disagree is the starfield,
+    which is decoration and hidden from assistive tech either way.
+  */}
+  <body class="bg-void text-white">
+    {
+      /* Data, not code: parsed by scripts/audio.ts and by the soundtrack
+        island, whichever runs first. */
+    }
+    <script type="application/json" data-audio-playlist set:html={JSON.stringify(playlist)} is:inline />
+
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:bg-white focus:px-4 focus:py-3 focus:font-display focus:text-void"
@@ -66,41 +92,37 @@ const playlist = {
       {copy.nav.skip}
     </a>
 
-    {/* Data, not code: parsed by scripts/audio.ts and by the soundtrack
-        island, whichever runs first. */}
-    <script type="application/json" data-audio-playlist set:html={JSON.stringify(playlist)} is:inline
-    ></script>
-
-    {/* Behind everything, showing through wherever the scenes fade out. */}
-    <Starfield />
-
     <TopBar nav={copy.nav} />
-    <SideRail nav={copy.nav} />
     <ScrollBar />
+    <SideRail nav={copy.nav} />
     <Chapter chapters={chapters} />
 
-    {/*
+    {
+      /*
       ScrollSmoother requires this exact two-div structure: an outer
       #smooth-wrapper and a single #smooth-content child holding everything
       that should scroll. Fixed-position chrome (TopBar, SideRail, the
-      Chapter block, the menu dialog) stays OUTSIDE it on purpose — a fixed
+      Chapter block, the menu dialog) stays OUTSIDE it on purpose - a fixed
       element that ends up inside gets transformed along with the scrolled
       content instead of staying put, which is a well-documented way this
       plugin's wrapper pattern goes wrong.
 
       When ScrollSmoother isn't created (reduced motion, or before the
       script runs at all) these are just two plain block-level divs with no
-      special styling — ScrollSmoother applies its own positioning via JS at
+      special styling - ScrollSmoother applies its own positioning via JS at
       runtime, never via CSS here, so the native-scroll fallback path is
       untouched by this markup existing.
-    */}
-    {/*
+    */
+    }
+    {
+      /*
       `relative z-10` puts the scrolled content above the starfield. Explicit
       ordering rather than a negative z-index on the starfield, which would
-      have put it behind the body background where it could never be seen —
+      have put it behind the body background where it could never be seen -
       and `relative` so the stacking still holds under reduced motion, when
       ScrollSmoother never sets its own `position: fixed` here.
-    */}
+    */
+    }
     <div id="smooth-wrapper" class="relative z-10">
       <div id="smooth-content">
         <main id="main" tabindex="-1" class="focus:outline-none">
@@ -110,6 +132,9 @@ const playlist = {
         <Footer copy={copy.media} />
       </div>
     </div>
+
+    {/* Behind everything, showing through wherever the scenes fade out. */}
+    <Starfield />
 
     <script>
       import '../scripts/scroll.ts';

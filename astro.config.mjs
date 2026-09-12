@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   // Only English ships today. Adding a locale means adding it here and
-  // dropping a matching file into src/content/copy/ — nothing else changes.
+  // dropping a matching file into src/content/copy/ - nothing else changes.
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],

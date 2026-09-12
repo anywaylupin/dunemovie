@@ -10,7 +10,7 @@
  * it with a far-future cache header like every other asset.
  *
  * Tracks with no matching file report `null` and the transport disables
- * itself for them — see scripts/audio.ts. That is the state the repository
+ * itself for them - see scripts/audio.ts. That is the state the repository
  * ships in: the score is licensed music and none of it is in this project.
  */
 

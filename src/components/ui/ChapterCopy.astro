@@ -3,7 +3,7 @@
  * The real, machine-readable copy for a scene that renders its text through
  * the pinned Chapter block.
  *
- * Visually hidden, because the Chapter block paints it — but present in the
+ * Visually hidden, because the Chapter block paints it - but present in the
  * document in correct reading order, exposed to assistive tech, available to
  * crawlers, and visible if JavaScript never arrives. The call to action is a
  * genuine link that reveals itself on focus, so keyboard users can still
@@ -18,7 +18,7 @@ interface Props {
   href?: string;
 }
 
-const { as: Tag = 'h2', title, body, cta, href = '#' } = Astro.props;
+const { as: Tag = 'h2', title, body, cta, href = '#' }: Props = Astro.props;
 const paragraphs = Array.isArray(body) ? body : [body];
 ---
 
@@ -32,7 +32,7 @@ const paragraphs = Array.isArray(body) ? body : [body];
         data-shape="slab"
         class="focus:not-sr-only focus:fixed focus:bottom-6 focus:left-6 focus:z-100 focus:bg-accent focus:px-6 focus:py-3 focus:font-display focus:text-xs focus:tracking-[0.3em] focus:text-white focus:uppercase"
       >
-        {cta} — {title}
+        {cta} - {title}
       </a>
     )
   }

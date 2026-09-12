@@ -1,7 +1,7 @@
 /**
  * Binds the static transport markup to the shared player.
  *
- * The hero's audio bar is plain Astro output, not an island — this is a
+ * The hero's audio bar is plain Astro output, not an island - this is a
  * play button and a scrubber, and hydrating a component framework to run
  * six event listeners would cost more than the feature. The controls are
  * addressed by attribute, the same way every other behaviour on this page

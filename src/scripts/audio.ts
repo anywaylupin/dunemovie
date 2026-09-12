@@ -1,8 +1,8 @@
 /**
  * The page's one audio player.
  *
- * There are two surfaces onto the same player — the transport in the hero
- * and the playlist in the soundtrack section — so the element and the state
+ * There are two surfaces onto the same player - the transport in the hero
+ * and the playlist in the soundtrack section - so the element and the state
  * live here rather than in either of them. Pressing play in the hero and
  * picking a track from the playlist drive the same player, and both surfaces
  * show the same time.
@@ -15,7 +15,7 @@
  * layout's <script> and each island as separate entry points; they normally
  * share a chunk for a module both import, but that is a bundler outcome, not
  * a guarantee. Two copies of this module would mean two <audio> elements
- * playing over each other — a bad enough failure to be worth one line of
+ * playing over each other - a bad enough failure to be worth one line of
  * defensiveness.
  */
 
@@ -114,7 +114,7 @@ function createPlayer(): Player {
 
     // With an empty src/assets/audio this is every track, and the point is
     // that nothing is constructed: no <audio> element, no request, no error
-    // event. Selecting a track still works — it just has nothing to play.
+    // event. Selecting a track still works - it just has nothing to play.
     if (!track?.src) {
       audio?.removeAttribute('src');
       return;
@@ -126,7 +126,7 @@ function createPlayer(): Player {
   }
 
   function play() {
-    // A rejected play() is ordinary — an autoplay block, or a missing file.
+    // A rejected play() is ordinary - an autoplay block, or a missing file.
     // Either way the UI must not be left claiming it is playing.
     void element()
       .play()
@@ -142,7 +142,7 @@ function createPlayer(): Player {
   }
 
   /**
-   * Moves to the next track that actually has a file, wrapping — so `next`
+   * Moves to the next track that actually has a file, wrapping - so `next`
    * on the last track returns to the top rather than stopping dead, and a
    * half-populated folder does not strand the transport on a silent track
    * it cannot play. This is also what `ended` uses to auto-advance.
@@ -221,8 +221,8 @@ export const player: Player = ((globalThis as Record<string, unknown>).__dunePla
 /**
  * Reads the playlist the layout serialised.
  *
- * Safe to call more than once — both the layout script and the island call
- * it, and whichever runs first wins — and safe to call on the server, where
+ * Safe to call more than once - both the layout script and the island call
+ * it, and whichever runs first wins - and safe to call on the server, where
  * there is no document: Astro evaluates island modules during the static
  * render, so an unguarded querySelector here fails the build.
  */
@@ -244,9 +244,17 @@ export function hydratePlaylist(): void {
   }
 }
 
-/** Seconds to `m:ss`, matching how the running times are printed in the copy. */
+/**
+ * Seconds to `mm:ss`, matching how the running times are printed in the copy.
+ *
+ * The minutes are padded for the same reason the seconds are: the readout is
+ * repainted four times a second next to a divider and a waveform, and an
+ * unpadded `9:59` turning into `10:00` is a character's worth of width
+ * appearing under them. Padded, every running time under an hour is five
+ * characters wide, and the transport never moves while it plays.
+ */
 export function formatTime(seconds: number): string {
-  if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
+  if (!Number.isFinite(seconds) || seconds < 0) return '00:00';
   const whole = Math.floor(seconds);
-  return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
+  return `${String(Math.floor(whole / 60)).padStart(2, '0')}:${String(whole % 60).padStart(2, '0')}`;
 }

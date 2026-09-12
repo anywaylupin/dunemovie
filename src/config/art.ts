@@ -9,7 +9,7 @@
  * the placeholder treatment rather than a broken layout.
  *
  * Files live in src/assets/images/ (processed) rather than public/ (copied
- * verbatim) — that is what buys the WebP conversion and the srcset.
+ * verbatim) - that is what buys the WebP conversion and the srcset.
  */
 
 import type { ImageMetadata } from 'astro';
@@ -32,10 +32,19 @@ import posterBase from '../assets/images/poster-base.png';
 import poster from '../assets/images/poster.png';
 import star from '../assets/images/star.jpg';
 import vector from '../assets/images/vector.png';
-import wordmark from '../assets/images/dune.png';
+import logo from '../assets/images/dune.png';
+
+/* Interface chrome, drawn as vector rather than raster: the CTA slab and the
+   two dashed-ring transport glyphs. The third, time.svg, is drawn inline in
+   hud/SideRail.astro instead - its arc has to turn, and an <img> cannot be
+   reached into from the page's stylesheet. */
+import ctaSlab from '../assets/images/button.svg';
+import pauseIcon from '../assets/images/pause.svg';
+import soundIcon from '../assets/images/sound.svg';
 
 /** Loose artwork the sections reach for directly. */
-export { abstract, poster, posterBase, star, vector, wordmark };
+export { abstract, poster, posterBase, star, vector, logo };
+export { ctaSlab, pauseIcon, soundIcon };
 
 export interface BackdropArt {
   image: ImageMetadata;
@@ -54,19 +63,19 @@ export interface BackdropArt {
 export const backdropArt: Record<string, BackdropArt> = {
   hero: { image: hero, position: 'center top', circles: heroCircles, strength: 100 },
   about: { image: about, position: 'center top', circles: aboutCircles, strength: 90 },
-  // "houses — starfield" in the original labelling, and star.jpg is the
+  // "houses - starfield" in the original labelling, and star.jpg is the
   // starfield plate the hero section fades in at its top edge.
   houses: { image: star, position: 'center', circles: aboutCircles, strength: 45 },
   heroes: { image: star, position: 'right center', circles: atreidesCircles, strength: 35 },
-  caladan: { image: caladan, position: 'center top', circles: caladanCircles, strength: 100 },
+  caladan: { image: caladan, position: 'center top', circles: caladanCircles, strength: 100 }
 };
 
 export interface FactionArt {
   image: ImageMetadata;
   /**
-   * plate — a cut-out that occupies the right half and dissolves toward
+   * plate - a cut-out that occupies the right half and dissolves toward
    *         the middle, so the chapter copy on the left never sits on it
-   * full  — a whole scene that covers the frame
+   * full  - a whole scene that covers the frame
    */
   layout: 'plate' | 'full';
   position?: string;
@@ -83,7 +92,7 @@ export interface FactionArt {
  * over the top.
  *
  * Every plate sits on the right because the pinned Chapter block owns the
- * left column across the whole page (see hud/Chapter.astro) — a cut-out on
+ * left column across the whole page (see hud/Chapter.astro) - a cut-out on
  * the left would be read through the paragraph text.
  */
 export const factionArt: Record<string, FactionArt> = {
@@ -93,14 +102,14 @@ export const factionArt: Record<string, FactionArt> = {
     position: 'center top',
     texture: atreidesTexture,
     circles: atreidesCircles,
-    tint: '#236d38',
+    tint: '#236d38'
   },
   harkonnen: {
     image: harkonnen,
     layout: 'full',
     position: 'center',
     circles: harkonnenCircles,
-    tint: '#8d1030',
+    tint: '#8d1030'
   },
   fremen: {
     image: fremen,
@@ -108,8 +117,8 @@ export const factionArt: Record<string, FactionArt> = {
     position: 'center top',
     texture: atreidesTexture,
     circles: fremenCircles,
-    tint: '#ffb800',
-  },
+    tint: '#ffb800'
+  }
 };
 
 /**
@@ -118,10 +127,10 @@ export const factionArt: Record<string, FactionArt> = {
  * that slot does not exist yet.
  */
 export const plateArt: Record<string, ImageMetadata> = {
-  /** About — the framed key-art poster, 760 × 1080 */
+  /** About - the framed key-art poster, 760 × 1080 */
   poster,
-  /** Heroes — Leto's portrait doubles as the featured cut-out */
+  /** Heroes - Leto's portrait doubles as the featured cut-out */
   featured: atreides,
-  /** Soundtrack — the score reuses the film's key art, as scores do */
-  cover: poster,
+  /** Soundtrack - the score reuses the film's key art, as scores do */
+  cover: poster
 };

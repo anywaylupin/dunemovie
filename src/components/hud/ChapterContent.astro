@@ -1,5 +1,6 @@
 ---
 import DecryptText from '../ui/DecryptText.astro';
+import { ctaSlab } from '../../config/art';
 
 /** Shared innards for both the pinned block and any in-flow chapter. */
 interface Props {
@@ -14,27 +15,14 @@ interface Props {
   href?: string;
 }
 
-const {
-  label,
-  title,
-  description,
-  cta,
-  index,
-  total,
-  interactive = false,
-  href = '#',
-} = Astro.props;
+const { label, title, description, cta, index, total, interactive = false, href = '#' } = Astro.props;
 
 const Cta = interactive ? 'a' : 'span';
 ---
 
 <div class="flex w-full flex-col gap-5">
-  <div data-slot="chapter-nav" class="flex items-baseline gap-4">
-    <DecryptText
-      as="h3"
-      text={label}
-      class="font-display text-xl font-bold tracking-[0.08em] text-white"
-    />
+  <div data-slot="chapter-nav" class="flex items-baseline gap-8">
+    <DecryptText as="h3" text={label} class="font-display text-xl font-bold tracking-[0.08em] text-white" />
     <ul class="flex" aria-hidden="true">
       {
         Array.from({ length: total }, (_, slash) => (
@@ -55,10 +43,10 @@ const Cta = interactive ? 'a' : 'span';
   <DecryptText
     as="h2"
     text={title}
-    class="font-display text-4xl leading-[0.95] font-bold text-white sm:text-5xl lg:text-6xl"
+    class="font-agency-fb text-4xl tracking-[0.96px] font-bold text-white sm:text-7xl lg:text-[96px]"
   />
 
-  <p class="max-w-2xl font-display text-base leading-relaxed text-white lg:text-lg">
+  <p class="max-w-2xl font-agency-fb lg:text-[28px] leading-[180%] tracking-[1.4px] text-white text-base">
     <DecryptText text={description} />
   </p>
 
@@ -66,13 +54,53 @@ const Cta = interactive ? 'a' : 'span';
     cta && (
       <Cta
         href={interactive ? href : undefined}
-        data-shape="slab"
-        class="mt-2 inline-flex w-fit items-center gap-3 bg-accent px-6 py-3 font-display text-xs font-semibold tracking-[0.3em] text-white uppercase"
+        data-slot="cta-slab"
+        class="group relative mt-2 block w-[15rem] max-w-full sm:w-[17rem]"
+        style="aspect-ratio: 267 / 40"
       >
-        <span class="grid size-4 shrink-0 place-items-center rounded-full ring-1 ring-current">
-          <span class="size-1 rounded-full bg-current" />
+        {/*
+          The slab, the ringed play glyph and the trailing slashes are one
+          drawing (button.svg), so the label is the only thing laid over it -
+          nothing here re-draws the artwork in CSS.
+
+          The file carries a 25px drop shadow inside its own viewBox, which
+          pads the artwork by exactly 50 units on all four sides: the slab
+          occupies x 50-317, y 50-90 of a 367x140 frame. Left as-is that
+          padding is invisible whitespace, and the button hangs inward from
+          the copy column it is supposed to line up with. So the box below is
+          the slab itself - 267x40 - and the image is scaled and pulled out
+          by that inset, letting the glow spill past the edges without
+          carrying any layout with it.
+
+          Drawn twice, because hover moves the slashes and not the slab. The
+          same image is cut into two layers along the diagonal running down
+          the gap between the slab's chamfered tip and the first slash -
+          parallel to both, so the cut falls in empty space and the halves
+          reassemble into the original artwork at rest. One request and one
+          decode: same src, so the second is a cache hit. The clips and the
+          hover live in global.css.
+        */}
+        <img
+          src={ctaSlab.src}
+          width={ctaSlab.width}
+          height={ctaSlab.height}
+          alt=""
+          aria-hidden="true"
+          data-part="slab"
+          class="absolute -top-[125%] -left-[18.727%] w-[137.453%] max-w-none"
+        />
+        <img
+          src={ctaSlab.src}
+          width={ctaSlab.width}
+          height={ctaSlab.height}
+          alt=""
+          aria-hidden="true"
+          data-part="slashes"
+          class="absolute -top-[125%] -left-[18.727%] w-[137.453%] max-w-none"
+        />
+        <span class="absolute inset-y-0 left-10.75 flex items-center justify-center font-bold text-lg font-agency-fb tracking-[6px] text-white uppercase">
+          {cta}
         </span>
-        {cta}
       </Cta>
     )
   }

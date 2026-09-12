@@ -53,7 +53,7 @@ function setUpReveals() {
 /* --- decrypt --------------------------------------------------------- */
 
 /**
- * Latin letters only — no digits, no punctuation. Two pools rather than one
+ * Latin letters only - no digits, no punctuation. Two pools rather than one
  * so a scrambled character keeps the case of the character it stands in
  * for: swapping a lowercase letter for `Q` changes the silhouette of the
  * word, and a paragraph of that reads as a different block of text jumping
@@ -76,7 +76,7 @@ const TICK_MS = 30;
  * Scrambles an element's text, then resolves the whole string at once.
  *
  * Every character cycles simultaneously for a fixed duration and the real
- * text snaps in when that duration ends — rather than resolving left to
+ * text snaps in when that duration ends - rather than resolving left to
  * right, which read as a progress bar and took longer the more there was to
  * say. Because the duration does not depend on length, a heading and the
  * paragraph under it land together.
@@ -95,7 +95,7 @@ export function decrypt(el: HTMLElement) {
 
   // Whitespace is left alone: it carries the shape of the text, so
   // scrambling it would turn a paragraph into one grey block. Anything that
-  // is not a letter — punctuation, digits, an em dash — stays put for the
+  // is not a letter - punctuation, digits, an em dash - stays put for the
   // same reason.
   const chars = [...text];
   const scrambleFor = (char: string) => {

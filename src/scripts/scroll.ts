@@ -1,7 +1,7 @@
 /**
  * Anchor navigation.
  *
- * The easing itself is `scroll-behavior: smooth` in CSS — no scroll library,
+ * The easing itself is `scroll-behavior: smooth` in CSS - no scroll library,
  * nothing running per frame. This only handles what CSS cannot: moving the
  * reading position along with the viewport, so keyboard and screen reader
  * users land where sighted users are looking.

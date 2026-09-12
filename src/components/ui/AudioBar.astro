@@ -2,12 +2,13 @@
 /**
  * The transport in the hero.
  *
- * Static markup wired to the shared player by scripts/audio-controls.ts —
+ * Static markup wired to the shared player by scripts/audio-controls.ts -
  * no island. Everything it renders is the pre-playback state read from the
  * copy, so the bar is complete and correct before any script runs and
  * simply comes alive when one does.
  */
 import Waveform from './Waveform.astro';
+import { pauseIcon, soundIcon } from '../../config/art';
 import type { Copy } from '../../i18n/copy';
 
 interface Props {
@@ -24,7 +25,7 @@ const { track, elapsed, duration, labels, progress = 0, class: className = '' } 
 
 {/*
   The labels ride on data-* rather than being looked up by the script,
-  which keeps every user-facing string in src/content — including the ones
+  which keeps every user-facing string in src/content - including the ones
   that only ever appear as an aria-label.
 */}
 <div
@@ -37,92 +38,119 @@ const { track, elapsed, duration, labels, progress = 0, class: className = '' } 
   data-label-unavailable={labels.unavailable}
   class:list={['flex items-center gap-4 sm:gap-6', className]}
 >
-  <button
-    type="button"
-    data-audio-step="-1"
-    class="hidden size-11 shrink-0 place-items-center rounded-full text-white/70 transition-colors hover:text-white sm:grid"
-    aria-label={labels.previous}
-  >
-    <svg viewBox="0 0 24 24" class="size-4 fill-current" aria-hidden="true">
-      <path d="M7 6h2v12H7zm10 0v12l-8-6z"></path>
-    </svg>
-  </button>
-
   {/*
-    One button, both icons — CSS shows the right one from data-state, so
-    the label is the only thing the script has to keep in step.
+    One button, both glyphs - CSS shows the right one from data-state, so the
+    label is the only thing the script has to keep in step.
+
+    Playing is pause.svg, straight from the design. Paused has no file of its
+    own, so it is drawn here against the same geometry: the ring is pause.svg's
+    ring, value for value (r 23.5 on a 48 box, dash 1 4, half opacity), with a
+    play triangle sheared to the same angle as that file's pause bars. The two
+    states sit on each other without a pixel of drift.
   */}
   <button
     type="button"
     data-audio-toggle
     data-state="paused"
-    class="group grid size-11 shrink-0 place-items-center rounded-full ring-1 ring-white/40 transition-colors hover:ring-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:ring-white/40"
+    class="group grid size-12 shrink-0 place-items-center opacity-90 transition-opacity hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
     aria-label={labels.play}
   >
-    <svg viewBox="0 0 24 24" class="size-4 fill-white group-data-[state=playing]:hidden" aria-hidden="true">
-      <path d="M8 5v14l11-7z"></path>
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      aria-hidden="true"
+      class="col-start-1 row-start-1 size-12 group-data-[state=playing]:hidden"
+    >
+      <circle opacity="0.5" cx="24" cy="24" r="23.5" stroke="white" stroke-dasharray="1 4" />
+      <path d="M20 16.5 32 24 20 31.5Z" fill="white" />
     </svg>
-    <span class="hidden gap-[3px] group-data-[state=playing]:flex" aria-hidden="true">
-      <span class="h-3 w-[2px] bg-white"></span>
-      <span class="h-3 w-[2px] bg-white"></span>
-    </span>
+
+    <img
+      src={pauseIcon.src}
+      width={pauseIcon.width}
+      height={pauseIcon.height}
+      alt=""
+      aria-hidden="true"
+      class="col-start-1 row-start-1 hidden size-12 group-data-[state=playing]:block"
+    />
   </button>
 
-  <button
-    type="button"
-    data-audio-step="1"
-    class="hidden size-11 shrink-0 place-items-center rounded-full text-white/70 transition-colors hover:text-white sm:grid"
-    aria-label={labels.next}
-  >
-    <svg viewBox="0 0 24 24" class="size-4 fill-current" aria-hidden="true">
-      <path d="M15 6h2v12h-2zM7 6l8 6-8 6z"></path>
-    </svg>
-  </button>
+  {/*
+    Both running times sit in fixed slots rather than sizing to their text.
 
-  <p class="shrink-0 font-display text-sm tracking-[0.25em] text-white/80 tabular-nums">
-    <span data-audio-time>{elapsed}</span>
-    <span class="px-1 text-white/70">/</span>
-    <span data-audio-duration>{duration}</span>
+    The elapsed time is rewritten four times a second, and every character it
+    gains or loses would otherwise be handed straight to the divider, the
+    track title and the waveform beside it - the whole transport creeping
+    sideways as the track plays. Five characters wide (mm:ss, see formatTime)
+    plus this row's 0.25em of tracking on each of them, so the box is the
+    width of the longest value it can hold and the numerals - tabular, so
+    they are all one width - are centred in it.
+  */}
+  <p class="shrink-0 font-display text-lg tracking-[0.25em] text-white tabular-nums">
+    <span data-audio-time class="inline-block w-[calc(5ch+1.25em)] text-center">{elapsed}</span>
+    <span class="px-2 text-white/50">/</span>
+    <span data-audio-duration class="inline-block w-[calc(5ch+1.25em)] text-center">{duration}</span>
   </p>
 
-  <span class="hidden h-12 w-px bg-white/30 sm:block" aria-hidden="true"></span>
+  <span class="hidden h-16 w-px shrink-0 bg-white/30 sm:block" aria-hidden="true"></span>
 
-  <div class="hidden min-w-0 flex-1 sm:block">
-    <p
-      data-audio-title
-      class="mb-2 truncate font-display text-[0.7rem] tracking-[0.4em] text-white uppercase"
-    >
-      {track}
-    </p>
+  {/*
+    Track and mute are one group, not three loose siblings.
 
-    {/*
-      A real slider, not a decorative bar: role, range, keyboard handling
-      (arrows, Page keys, Home/End) and a visible focus ring. The waveform
-      inside it is the value display.
-    */}
-    <div
-      data-audio-seek
-      role="slider"
-      tabindex="0"
-      aria-label={labels.seek}
-      aria-valuemin="0"
-      aria-valuemax="100"
-      aria-valuenow="0"
-      class="cursor-pointer py-1 focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-cyan aria-disabled:cursor-default"
-    >
-      <Waveform progress={progress} />
+    Apart, the waveform sized itself and the mute button was simply the next
+    thing along - so as the row narrowed, the waveform kept its width and ran
+    over the button. Together, the button is a fixed-width member of the same
+    flex row and the waveform is the part that gives (min-w-0, so it is
+    allowed to shrink below its content), which makes overlapping them
+    impossible rather than unlikely.
+
+    The whole group stands down below sm, where there is no width to divide:
+    what is left is a play button and a running time, which is the part of a
+    transport that still works at that size.
+  */}
+  <div class="hidden min-w-0 flex-1 items-center gap-4 sm:flex sm:gap-6">
+    <div class="min-w-0 flex-1">
+      <p
+        data-audio-title
+        class="mb-2 truncate font-display text-[0.7rem] tracking-[0.4em] text-white uppercase"
+      >
+        {track}
+      </p>
+
+      {/*
+        A real slider, not a decorative bar: role, range, keyboard handling
+        (arrows, Page keys, Home/End) and a visible focus ring. The waveform
+        inside it is the value display.
+      */}
+      <div
+        data-audio-seek
+        role="slider"
+        tabindex="0"
+        aria-label={labels.seek}
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+        class="cursor-pointer py-1 focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-cyan aria-disabled:cursor-default"
+      >
+        <Waveform progress={progress} />
+      </div>
     </div>
-  </div>
 
-  <button
-    type="button"
-    data-audio-mute
-    aria-pressed="false"
-    class="hidden size-11 shrink-0 place-items-center rounded-full ring-1 ring-white/40 transition-colors hover:ring-white aria-pressed:bg-white/10 sm:grid"
-    aria-label={labels.mute}
-  >
-    <svg viewBox="0 0 24 24" class="size-4 fill-white" aria-hidden="true">
-      <path d="M4 9v6h4l5 4V5L8 9H4Zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Z"></path>
-    </svg>
-  </button>
+    <button
+      type="button"
+      data-audio-mute
+      aria-pressed="false"
+      class="grid size-12 shrink-0 place-items-center opacity-80 transition-opacity hover:opacity-100 aria-pressed:opacity-50"
+      aria-label={labels.mute}
+    >
+      <img
+        src={soundIcon.src}
+        width={soundIcon.width}
+        height={soundIcon.height}
+        alt=""
+        aria-hidden="true"
+        class="w-12"
+      />
+    </button>
+  </div>
 </div>

@@ -9,22 +9,25 @@ const { nav } = Astro.props;
 
 /**
  * Which section belongs to which marker. The three factions share one, and
- * anything absent from the map hides the rail entirely — the card-grid
+ * anything absent from the map hides the rail entirely - the card-grid
  * sections are not chapters and get no marker.
  */
-const ownership = nav.rail.flatMap((marker) =>
-  marker.sections.map((section) => [section, marker.id] as const),
-);
+const ownership = nav.rail.flatMap((marker) => marker.sections.map((section) => [section, marker.id] as const));
 ---
 
-{/*
-  Seven markers, numbered rather than dotted, strung on a hairline. The active
-  one is ringed by a slowly turning scanner — two arcs at different speeds and
-  directions, which is the instrument-panel language the rest of the HUD uses.
+{
+  /*
+  Seven markers, numbered rather than dotted. The active one is ringed by the
+  time.svg instrument - dashed ring, swept arc, lime diamond, two ticks
+  reaching for the screen edge - drawn inline rather than loaded as an image
+  so the arc can turn and the number can stay legible inside it. Its geometry
+  is the file's, value for value; only the glyph that sat where the number
+  goes has been left out.
 
   Each link carries its chapter name as real text, visually hidden, so the
   anchor text is descriptive rather than seven links all called "04".
-*/}
+*/
+}
 <nav
   data-slot="rail"
   data-visible="true"
@@ -33,11 +36,6 @@ const ownership = nav.rail.flatMap((marker) =>
   aria-label={nav.progressLabel}
 >
   <ol class="relative flex flex-col items-center gap-6">
-    <span
-      aria-hidden="true"
-      class="absolute inset-y-2 left-1/2 w-px -translate-x-1/2 bg-linear-to-b from-transparent via-white/25 to-transparent"
-    ></span>
-
     {
       nav.rail.map((marker, i) => (
         <li class="relative">
@@ -46,45 +44,58 @@ const ownership = nav.rail.flatMap((marker) =>
             data-rail-item={marker.id}
             class="group relative grid size-11 place-items-center font-display text-[0.7rem] tracking-[0.15em] text-white/60 tabular-nums transition-colors duration-300 hover:text-white data-[active]:text-white"
           >
-            <span aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <span aria-hidden="true" data-part="index" class="transition-opacity duration-300">
+              {String(i + 1).padStart(2, '0')}
+            </span>
             <span class="sr-only">{marker.label}</span>
 
-            <svg
-              data-part="ring"
-              viewBox="0 0 44 44"
-              aria-hidden="true"
-              class="pointer-events-none absolute inset-0 size-11 opacity-0"
-            >
-              <circle cx="22" cy="22" r="19" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.25" />
-              <circle
-                data-part="arc-outer"
-                cx="22"
-                cy="22"
-                r="19"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1"
-                stroke-linecap="round"
-                pathLength="100"
-              />
-              <circle
-                data-part="arc-inner"
-                cx="22"
-                cy="22"
-                r="15"
-                fill="none"
-                stroke="var(--color-lime)"
-                stroke-width="1"
-                stroke-linecap="round"
-                pathLength="100"
-              />
-            </svg>
+            {/*
+              Placed by its own geometry, not by the box: the ring is centred
+              at (24, 29) of a 50x53 frame, so the drawing is nudged by that
+              difference to sit concentric with the 44px marker - and with the
+              number in the middle of it - rather than with its own bounding
+              box.
 
-            <span
-              data-part="pip"
+              The dashed ring is the dial. Everything that moves over it is
+              one part: the lime diamond at the sweep's leading edge, the arc
+              behind it, and the two ticks at its tail. They are drawn in the
+              file at exactly those three positions, so grouping them is what
+              the drawing already implied - and turning the group keeps the
+              diamond, the arc and the ticks in step instead of leaving two of
+              them stranded at twelve and three o'clock.
+
+              The arc is the file's masked quadrant redrawn as a dash - same
+              shape, but something CSS can turn. The 22/78 split is that
+              quadrant's share of the circumference, and the offset of 22 is
+              what lands it where the mask had it, ending at three o'clock,
+              so the group needs no rotation of its own to sit at rest. See
+              global.css for the sweep.
+            */}
+            <svg
+              data-part="marker"
+              viewBox="0 0 50 53"
+              fill="none"
               aria-hidden="true"
-              class="pointer-events-none absolute -top-px right-0 size-1.5 rotate-45 bg-lime opacity-0"
-            />
+              class="pointer-events-none overflow-visible absolute -top-[7px] -left-[2px] w-[50px] max-w-none opacity-0"
+            >
+              <circle opacity="0.5" cx="24" cy="29" r="23.5" stroke="white" stroke-dasharray="1 4" />
+
+              <g data-part="sweep">
+                <circle
+                  cx="24"
+                  cy="29"
+                  r="23.5"
+                  stroke="white"
+                  pathLength="100"
+                  stroke-dasharray="22 78"
+                  stroke-dashoffset="22"
+                />
+                <path d="M29.293 6L24 11.293L18.707 6L24 0.707031L29.293 6Z" stroke="white" />
+                <path d="M21 6L24 3L27 6L24 9L21 6Z" fill="#77E609" />
+                <rect x="45" y="29" width="5" height="1" fill="white" />
+                <rect x="46" y="31" width="3" height="1" fill="white" />
+              </g>
+            </svg>
           </a>
         </li>
       ))
@@ -92,9 +103,7 @@ const ownership = nav.rail.flatMap((marker) =>
   </ol>
 </nav>
 
-<p
-  class="fixed right-7 bottom-6 z-50 hidden size-11 rotate-45 place-items-center ring-1 ring-white/25 md:grid"
->
+<p class="fixed right-7 bottom-6 z-50 hidden size-11 rotate-45 place-items-center ring-1 ring-white/25 md:grid">
   <span class="-rotate-45 font-hud text-[0.65rem] tracking-[0.2em] text-white/70">
     {nav.language}
   </span>

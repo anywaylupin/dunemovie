@@ -31,7 +31,7 @@ const { copy } = Astro.props;
   `position: sticky` it used to rely on. Sticky cannot work here:
   ScrollSmoother makes #smooth-wrapper `position: fixed; overflow: hidden`
   and moves #smooth-content by transform, so the stage's nearest scrollport
-  is a container that never scrolls — there is no scroll for it to stick
+  is a container that never scrolls - there is no scroll for it to stick
   against, and it simply travelled with the page. The `sticky top-0` below
   is kept as the fallback for the one case where that is not true: under
   reduced motion no smoother is created, no pin is created either, and
@@ -72,7 +72,7 @@ const { copy } = Astro.props;
                 Two flare plates behind the mark, both from the original
                 art set: `abstract` is the soft disc it sits in, `vector`
                 the wider shaft of light behind that. Screened, low, and
-                inert — they read as lighting, not as objects.
+                inert - they read as lighting, not as objects.
               */}
               <Image
                 src={vector}

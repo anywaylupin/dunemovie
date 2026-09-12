@@ -8,28 +8,28 @@ import { decryptWithin } from './reveal';
  *
  * Four groups:
  *
- *   1. Activation — decides which section is "current", and therefore which
+ *   1. Activation - decides which section is "current", and therefore which
  *      rail marker lights and which chapter panel shows. Runs
  *      unconditionally, including under reduced motion: this is page state,
  *      not motion.
  *
- *   2. ScrollSmoother — real physical scroll smoothing (the page eases
+ *   2. ScrollSmoother - real physical scroll smoothing (the page eases
  *      toward the scroll position instead of snapping to it), plus the
  *      #smooth-wrapper / #smooth-content structure it requires. Created
  *      first within its motion-gated block, per GSAP's own guidance, since
  *      everything scrubbed to scroll position should measure against the
  *      smoothed scroll, not the raw one.
  *
- *   3. The section cross-dissolve and the faction cross-fade — scrubbed
+ *   3. The section cross-dissolve and the faction cross-fade - scrubbed
  *      tweens, unchanged in substance from before.
  *
- *   4. Pins — a generic, declarative system: any element with data-pin
+ *   4. Pins - a generic, declarative system: any element with data-pin
  *      becomes a pin trigger, so new pinned elements are a markup change,
  *      not a script change. This is what holds the faction stage in the
  *      frame; see the block itself for why CSS sticky cannot.
  *
- * Groups 2–4 sit behind gsap.matchMedia(), which — unlike a one-time
- * boolean check — keeps watching: if the person's OS motion setting changes,
+ * Groups 2–4 sit behind gsap.matchMedia(), which - unlike a one-time
+ * boolean check - keeps watching: if the person's OS motion setting changes,
  * GSAP automatically reverts and recreates what's inside to match. No reload
  * needed.
  */
@@ -120,7 +120,7 @@ document.querySelectorAll<HTMLElement>('[data-section]').forEach((section) => {
  *
  * global.css hides the document's native scrollbar so that full-bleed
  * artwork gets the whole window width, which makes drawing a replacement
- * non-optional rather than decorative — and puts this outside the
+ * non-optional rather than decorative - and puts this outside the
  * motion-gated block below, alongside activation: someone with reduced
  * motion on still needs a scrollbar.
  *
@@ -221,7 +221,7 @@ if (scrollbar && thumb) {
 }
 
 /* ------------------------------------------------------------------ *
- * 2–4. Smoother, scrubbed tweens, pins — all motion-gated
+ * 2–4. Smoother, scrubbed tweens, pins - all motion-gated
  * ------------------------------------------------------------------ */
 
 gsap.matchMedia().add(
@@ -230,7 +230,7 @@ gsap.matchMedia().add(
     const { motionOk } = context.conditions as { motionOk: boolean };
     if (!motionOk) return;
 
-    // Create the smoother first — everything scrubbed below should measure
+    // Create the smoother first - everything scrubbed below should measure
     // against the smoothed scroll position, not the raw one.
     ScrollSmoother.create({
       wrapper: '#smooth-wrapper',
@@ -250,7 +250,7 @@ gsap.matchMedia().add(
     // settled), one for leaving (settled to top of viewport). For adjacent
     // equal-height sections these two ranges are the same physical scroll
     // distance as the next section's own entry, which is what produces the
-    // overlap — the outgoing content is still fading as the incoming
+    // overlap - the outgoing content is still fading as the incoming
     // content is already most of the way in.
     gsap.utils.toArray<HTMLElement>('[data-scene]').forEach((scene) => {
       const section = scene.closest<HTMLElement>('[data-section]');
@@ -279,7 +279,7 @@ gsap.matchMedia().add(
         );
     });
 
-    // The starfield drifts against the page — a long, slow move across the
+    // The starfield drifts against the page - a long, slow move across the
     // whole document, so the band of space at each seam is never a static
     // image. This is the only thing behind the scenes that moves; the
     // scenes themselves keep their own frames.
@@ -299,7 +299,7 @@ gsap.matchMedia().add(
     // The faction panels are NOT scrubbed. Their opacity is a plain CSS
     // transition on data-active (see Factions.astro), flipped by activate()
     // above, so one scroll gesture takes you to the next house and the panel
-    // cross-fades on its own clock — rather than the house being a function
+    // cross-fades on its own clock - rather than the house being a function
     // of exactly how far you have scrolled, which made three discrete
     // scenes feel like one long dissolve you were dragging through.
     //
@@ -349,7 +349,7 @@ gsap.matchMedia().add(
     // cues that make a small round thing read as a body at a distance
     // rather than a dot on a page. The worlds in the Arrakis section carry
     // different values so they separate from each other as well as from the
-    // page — a shared rate would just look like the whole group sliding.
+    // page - a shared rate would just look like the whole group sliding.
     //
     // Deliberately its own attribute rather than more data-parallax: this
     // touches scale, and the parallax layers must not, since they are
@@ -391,13 +391,13 @@ gsap.matchMedia().add(
     // Pins. Generic and declarative: data-pin marks the trigger element
     // (the one whose start/end range defines the pin's duration);
     // data-pin-target, if present on a descendant, is what actually gets
-    // pinned — otherwise the trigger pins itself. New pinned elements are a
+    // pinned - otherwise the trigger pins itself. New pinned elements are a
     // markup change in the relevant .astro file, not a script change here.
     //
     // This is what holds the faction stage in the frame. CSS `position:
     // sticky` cannot do it once ScrollSmoother exists: the smoother makes
     // #smooth-wrapper `position: fixed; overflow: hidden`, which becomes the
-    // sticky element's scrollport — a container that never scrolls, and so
+    // sticky element's scrollport - a container that never scrolls, and so
     // never triggers the stick. A pin measures against the scroll position
     // itself and is unaffected.
     //
@@ -455,7 +455,7 @@ gsap.matchMedia().add(
  * Housekeeping
  * ------------------------------------------------------------------ */
 
-// Reconcile every trigger against the current scroll position right away —
+// Reconcile every trigger against the current scroll position right away -
 // covers the case where a trigger's initial condition is already true at
 // creation (Hero, on a page load at scrollY 0).
 ScrollTrigger.refresh();

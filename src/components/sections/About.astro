@@ -21,14 +21,14 @@ const { copy, step } = Astro.props;
   height against the right edge.
 
   This used to be a 170svh section with the poster pinned across the extra
-  height. That was a scroll-through the original never had — it made About
-  the one scene you passed through rather than arrived at — so the height and
+  height. That was a scroll-through the original never had - it made About
+  the one scene you passed through rather than arrived at - so the height and
   the pin are gone and the poster simply stands in the frame.
 */}
 <Section id="about" chapter="about" label={copy.eyebrow} class="relative items-center">
   <Backdrop
     slot="backdrop"
-    label="about — burning city"
+    label="about - burning city"
     art={backdropArt.about}
     wash="from-ink via-slate-deep to-void"
     parallax={20}
@@ -46,11 +46,11 @@ const { copy, step } = Astro.props;
   <ChapterCopy title={copy.title} body={copy.body} cta={copy.cta} />
 
   {/*
-    Anchored to the right edge on desktop, centred below it — at that width
+    Anchored to the right edge on desktop, centred below it - at that width
     the pinned Chapter block takes the whole screen, so an off-centre poster
     would sit under the paragraph rather than beside it.
 
-    Full section height on desktop, as in the original — the offsets are
+    Full section height on desktop, as in the original - the offsets are
     zero at `lg` so the frame is exactly as tall as the scene, and only
     smaller screens inset it to leave room for the chapter text.
 
@@ -58,7 +58,7 @@ const { copy, step } = Astro.props;
     aspect ratio, rather than from `h-full` on a flex child. That matters:
     a percentage height only resolves against a parent with a definite one,
     and `items-center` leaves the child content-sized, so the frame
-    collapsed to 0×0 — which also meant the lazy image was never fetched and
+    collapsed to 0×0 - which also meant the lazy image was never fetched and
     the zero-area box could never satisfy the reveal observer's threshold.
     Centring is `inset-x-0 mx-auto` rather than a translate for a related
     reason: [data-anim] animates `transform`, so a translate-based centring

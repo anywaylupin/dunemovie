@@ -2,6 +2,15 @@
 /**
  * Two identical rows of bars, the played one clipped to `--progress`.
  *
+ * The bars share the width they are given instead of measuring a fixed one:
+ * ninety 2px bars with 2px between them need 360px, and the transport hands
+ * this whatever is left after the play button, the running times and the mute
+ * button have taken theirs - which on a laptop is less than that. Fixed bars
+ * overflowed, and what they overflowed onto was the mute button. So the bars
+ * flex and the gap is a percentage of the row, which means the waveform is
+ * exactly as wide as its container at every size and the progress clip - a
+ * percentage of that same container - stays honest.
+ *
  * The duplication buys something: advancing playback is a single custom
  * property write on the container, not a class change across ninety
  * elements four times a second. The clip is a `clip-path`, so it composites
@@ -27,23 +36,23 @@ const heights = Array.from({ length: bars }, (_, i) => {
 <div
   data-slot="waveform"
   data-audio-progress
-  class:list={['relative flex h-8 w-full items-center gap-[2px]', className]}
+  class:list={['relative flex h-8 w-full items-center gap-[0.55%]', className]}
   style={`--progress:${progress}`}
   aria-hidden="true"
 >
   {
     heights.map((height) => (
-      <span class="w-[2px] shrink-0 rounded-full bg-white/40" style={`height:${height}%`} />
+      <span class="min-w-0 flex-1 rounded-full bg-white/40" style={`height:${height}%`} />
     ))
   }
 
   <div
     data-part="played"
-    class="pointer-events-none absolute inset-0 flex items-center gap-[2px] [clip-path:inset(0_calc(100%_-_var(--progress)*100%)_0_0)]"
+    class="pointer-events-none absolute inset-0 flex items-center gap-[0.55%] [clip-path:inset(0_calc(100%_-_var(--progress)*100%)_0_0)]"
   >
     {
       heights.map((height) => (
-        <span class="w-[2px] shrink-0 rounded-full bg-cyan" style={`height:${height}%`} />
+        <span class="min-w-0 flex-1 rounded-full bg-cyan" style={`height:${height}%`} />
       ))
     }
   </div>

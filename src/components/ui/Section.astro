@@ -19,7 +19,7 @@ const { id, label, chapter, class: className = '', auto = false } = Astro.props;
   moved with it, the transition would open a seam at the section edge.
 
   Unlike the CSS animation-timeline: view() approach this replaced, GSAP's
-  ScrollTrigger has no opinion about overflow: hidden on ancestors — it
+  ScrollTrigger has no opinion about overflow: hidden on ancestors - it
   measures position via getBoundingClientRect, not a scroll-container
   timeline, so that specific footgun is gone. Clipping here is fine if a
   future change needs it.

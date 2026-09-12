@@ -1,25 +1,58 @@
 ---
-import Wordmark from './Wordmark.astro';
-import GlyphBlock from './GlyphBlock.astro';
+import { Image } from 'astro:assets';
 import MenuIsland from '../islands/MenuIsland.tsx';
 import type { Copy } from '../../i18n/copy';
+import { logo } from '../../config/art';
+import DecryptText from '../ui/DecryptText.astro';
 
 interface Props {
   nav: Copy['nav'];
 }
 
 const { nav } = Astro.props;
+
+const lines = [
+  'ADS4MK10oLs',
+  'fJos5iu28xnkbs98sja7vmb',
+  'vkflud38nclisksmvf4lskx',
+  'j289lms8ASIP',
+  's3z81Josqiu28xnk2xm',
+  'm9x4dkflu73jncliop',
+  'skji2zklmops',
+  'ra2022year',
+  'webui'
+];
 ---
 
 <header
   data-slot="top-bar"
-  class="pointer-events-none fixed inset-x-0 top-0 z-70 flex items-start justify-between p-5 md:p-8"
+  class="pointer-events-none fixed inset-x-0 top-0 z-70 flex items-start justify-between p-5 md:py-8 md:px-10"
 >
   <div class="pointer-events-auto">
     <MenuIsland nav={nav} client:idle />
   </div>
 
-  <Wordmark class="pointer-events-auto absolute left-1/2 -translate-x-1/2" />
+  <a
+    href="#hero"
+    class="pointer-events-auto absolute left-1/2 -translate-x-1/2 block transition-opacity hover:opacity-70"
+    aria-label="Dune - back to top"
+  >
+    <Image
+      src={logo}
+      alt="Logo"
+      width={236}
+      height={32}
+      densities={[1, 2]}
+      loading="eager"
+      decoding="sync"
+      class="h-6 w-auto md:h-8"
+    />
+  </a>
 
-  <GlyphBlock class="hidden lg:block" />
+  <div
+    aria-hidden="true"
+    class="hidden font-dune-rise lg:flex lg:flex-col pointer-events-none text-right text-[10px] leading-[180%] tracking-[0.3px] text-[#485361] uppercase"
+  >
+    {lines.map((line) => <DecryptText text={line} />)}
+  </div>
 </header>

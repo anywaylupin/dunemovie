@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Dune — Explore the World",
+    "title": "Dune Universe",
     "description": "A scroll-driven editorial tour through the houses, planets, music and books of Dune."
   },
   "nav": {
@@ -84,53 +84,37 @@
       {
         "id": "hero",
         "label": "Home",
-        "sections": [
-          "hero"
-        ]
+        "sections": ["hero"]
       },
       {
         "id": "about",
         "label": "Description",
-        "sections": [
-          "about"
-        ]
+        "sections": ["about"]
       },
       {
         "id": "atreides",
         "label": "Fractions",
-        "sections": [
-          "atreides",
-          "harkonnen",
-          "fremen"
-        ]
+        "sections": ["atreides", "harkonnen", "fremen"]
       },
       {
         "id": "caladan",
         "label": "World",
-        "sections": [
-          "caladan"
-        ]
+        "sections": ["caladan"]
       },
       {
         "id": "architecture",
         "label": "Dune Architecture",
-        "sections": [
-          "architecture"
-        ]
+        "sections": ["architecture"]
       },
       {
         "id": "soundtrack",
         "label": "Space Orchestra",
-        "sections": [
-          "soundtrack"
-        ]
+        "sections": ["soundtrack"]
       },
       {
         "id": "author",
         "label": "Frank Herbert",
-        "sections": [
-          "author"
-        ]
+        "sections": ["author"]
       }
     ]
   },
@@ -159,8 +143,7 @@
     "eyebrow": "Description",
     "title": "About",
     "body": [
-      "A mythic and emotionally charged hero's journey. Dune tells the story of Paul Atreides, a gifted young man born into a destiny beyond his understanding, who must travel to the most dangerous planet in the universe to secure the future of his family and his people.",
-      "As rival forces fight over the planet's supply of the most valuable substance in existence, only those who can conquer their fear will survive."
+      "A mythic and emotionally charged hero’s journey, “Dune” tells the story of Paul Atreides, a brilliant and gifted young man born into a great destiny beyond his understanding, who must travel to the most dangerous planet in the universe to ensure the future of his family and his people. As malevolent forces explode into conflict over the planet’s exclusive supply of the most precious resource in existence—a commodity capable of unlocking humanity’s greatest potential—only those who can conquer their fear will survive."
     ],
     "cta": "Buy blu-ray",
     "poster": "key art poster · 2:3"
@@ -188,7 +171,7 @@
         "id": "harkonnen",
         "kind": "House",
         "name": "Harkonnen",
-        "quote": "There is no escape — we pay for the violence of our ancestors."
+        "quote": "There is no escape - we pay for the violence of our ancestors."
       },
       {
         "id": "atreides",
@@ -401,7 +384,7 @@
   "soundtrack": {
     "eyebrow": "Soundtrack",
     "title": "Space Orchestra",
-    "body": "The Dune Sketchbook runs a hundred minutes across nine tracks — an unhurried, cavernous score that treats the desert as an instrument.",
+    "body": "The Dune Sketchbook runs a hundred minutes across nine tracks - an unhurried, cavernous score that treats the desert as an instrument.",
     "cover": "album cover · 1:1",
     "spotify": "Listen on Spotify",
     "elapsed": "01:32",
@@ -478,7 +461,7 @@
   "comics": {
     "eyebrow": "Comics",
     "title": "Dune Comics",
-    "body": "Brian Herbert and Kevin J. Anderson, with artist Dev Pramanik, adapt their prequel novel into comics for the first time — set in the years leading up to the events of Dune.",
+    "body": "Brian Herbert and Kevin J. Anderson, with artist Dev Pramanik, adapt their prequel novel into comics for the first time - set in the years leading up to the events of Dune.",
     "cta": "Learn more"
   },
   "media": {

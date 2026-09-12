@@ -9,9 +9,9 @@ export interface ChapterEntry {
   description: string;
   cta?: string;
   /**
-   * bottom  — sits low on the screen, as on the hero
-   * stretch — a full-height left column, the default for split layouts
-   * flow    — the owning section renders the chapter itself, so the pinned
+   * bottom  - sits low on the screen, as on the hero
+   * stretch - a full-height left column, the default for split layouts
+   * flow    - the owning section renders the chapter itself, so the pinned
    *           block stands down and does not cover the section's own content
    */
   placement?: 'bottom' | 'stretch' | 'flow';
@@ -27,15 +27,20 @@ const visible = chapters.filter((chapter) => chapter.placement !== 'flow');
 
 {/*
   One Chapter block for the whole page. Across a run of chapter-bearing
-  scenes it never moves — only its text is rewritten — so it reads as a
+  scenes it never moves - only its text is rewritten - so it reads as a
   single element being retyped rather than two blocks swapping.
 
   It occupies the left column of the grid, which is why the sections that use
   it push their own content to column two.
 
+  A panel placed at the bottom clears the hero's transport, which below xl is
+  a full-width row of its own along the bottom edge rather than something
+  sharing the call to action's line. At xl the two meet on that line again and
+  the offset drops back to the 4rem the pairing is measured from.
+
   Placement lives on each panel, not on this container. If the container
   moved, the outgoing panel would be dragged from the hero's low position up
-  to the centre while it was still fading — which read as the block sliding
+  to the centre while it was still fading - which read as the block sliding
   about. Each panel sits where it belongs and only opacity changes.
 
   Presentational only: aria-hidden, no focusable children. The real copy for
@@ -45,14 +50,14 @@ const visible = chapters.filter((chapter) => chapter.placement !== 'flow');
   data-slot="chapter"
   data-visible="true"
   aria-hidden="true"
-  class="pointer-events-none fixed inset-y-0 left-5 z-40 w-[min(44rem,calc(100vw-2.5rem))] data-[visible=false]:opacity-0 md:left-12 lg:w-[min(46%,44rem)]"
+  class="pointer-events-none fixed inset-y-0 left-5 z-40 w-[min(44rem,calc(100vw-2.5rem))] data-[visible=false]:opacity-0 md:left-10 lg:w-[min(46%,44rem)]"
 >
   {
     visible.map((chapter, i) => (
       <article
         data-chapter-panel={chapter.id}
         data-placement={chapter.placement ?? 'stretch'}
-        class="absolute inset-x-0 flex opacity-0 data-[placement=bottom]:bottom-10 data-[placement=bottom]:md:bottom-16 data-[placement=stretch]:inset-y-0 data-[placement=stretch]:items-center data-[placement=stretch]:pt-28 data-[placement=stretch]:pb-24"
+        class="absolute inset-x-0 flex opacity-0 data-[placement=bottom]:bottom-24 data-[placement=bottom]:sm:bottom-32 data-[placement=bottom]:xl:bottom-16 data-[placement=stretch]:inset-y-0 data-[placement=stretch]:items-center data-[placement=stretch]:pt-28 data-[placement=stretch]:pb-24"
         data-active={i === 0 ? 'true' : 'false'}
       >
         <ChapterContent

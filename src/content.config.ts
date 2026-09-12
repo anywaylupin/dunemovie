@@ -1,6 +1,6 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
-// Not from 'astro:content' — that re-export is deprecated and goes away in
+// Not from 'astro:content' - that re-export is deprecated and goes away in
 // Astro 7. Same zod, sourced directly.
 import { z } from 'astro/zod';
 

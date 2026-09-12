@@ -10,21 +10,21 @@ import type { Copy } from '../../i18n/copy';
 interface Props {
   copy: Copy['hero'];
   labels: Copy['player'];
-  step: number;
 }
 
-const { copy, labels, step } = Astro.props;
+const { copy, labels } = Astro.props;
 ---
 
 <Section id="hero" chapter="hero" label={copy.eyebrow} class="items-center">
-  {/*
-    Two backdrop layers, both outside [data-scene] so neither travels with
-    the cross-dissolve. The statue plate is the LCP image on this page, so
-    it is the one thing on the site that loads eagerly at high priority.
-  */}
+  <span
+    aria-hidden="true"
+    data-watermark="Dune"
+    class="absolute pointer-events-none top-1/2 -translate-x-1/2 left-1/2 -translate-y-1/2 text-center uppercase"
+  ></span>
+
   <Backdrop
     slot="backdrop"
-    label="hero — statue line-up"
+    label="hero - statue line-up"
     art={backdropArt.hero}
     wash="from-slate-deep via-ink to-void"
     scrim="bottom"
@@ -33,11 +33,6 @@ const { copy, labels, step } = Astro.props;
     priority
   />
 
-  {/*
-    The starfield band. One plate and its mirror, so the field is symmetric
-    about the centre line where the statues stand, screened over the plate
-    below and dissolved downward before it reaches them.
-  */}
   <div
     slot="backdrop"
     aria-hidden="true"
@@ -51,7 +46,7 @@ const { copy, labels, step } = Astro.props;
       sizes="50vw"
       loading="eager"
       decoding="async"
-      class="h-full w-full object-cover object-right-top"
+      class="h-full w-full object-cover object-top-right"
     />
     <Image
       src={star}
@@ -60,29 +55,46 @@ const { copy, labels, step } = Astro.props;
       sizes="50vw"
       loading="eager"
       decoding="async"
-      class="h-full w-full -scale-x-100 object-cover object-right-top"
+      class="h-full w-full -scale-x-100 object-cover object-top-right"
     />
   </div>
 
-  <span aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden">
-    <span
-      data-watermark="Dune"
-      class="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-[22vw] leading-none font-bold tracking-[0.1em] uppercase"
-    ></span>
-  </span>
-
   <ChapterCopy as="h1" title={copy.title} body={copy.body} cta={copy.cta} />
 
-  <div class="absolute inset-x-0 bottom-10 px-5 md:px-12" data-anim="rise" style="--anim-delay:300ms">
-    <div class="mx-auto flex max-w-[110rem] items-center">
-      <div class="hidden w-2xl shrink-0 lg:block"></div>
-      <AudioBar
-        track={copy.player.track}
-        elapsed={copy.player.elapsed}
-        duration={copy.player.duration}
-        labels={labels}
-        class="w-full"
-      />
-    </div>
+  {/*
+    Wide enough, the transport sits on the same line as the chapter's call to
+    action rather than on a line of its own: the CTA slab's centre lands 84px
+    off the bottom of the frame (the pinned block's 4rem offset plus half the
+    slab), so this row is pinned to that same centre by being a band of twice
+    that height with the bar centred in it. A band rather than an offset and a
+    translate, because the entrance animation owns this element's transform,
+    and because the centre line then holds however tall the bar turns out to
+    be.
+
+    Across the width it runs 29% to 71%, which is what puts the ringed play
+    button clear of the copy column and stops the waveform before the rail.
+
+    Below xl there is not enough width for a 272px button and an 800px
+    transport to share a line - they met somewhere around 1100px - so the bar
+    takes the full width and drops to its own line at the very bottom, and the
+    chapter block lifts to make room for it (see hud/Chapter.astro). Its left
+    padding follows the top bar's, so the transport lines up with the rest of
+    the page furniture rather than with a percentage of nothing; the right is
+    deeper because the rail's language chip is parked in that corner, and a
+    full-width row would otherwise put the mute button underneath it. Below md
+    the chip and the rail are both gone, and the padding evens out again.
+  */}
+  <div
+    data-anim="rise"
+    style="--anim-delay:300ms"
+    class="pointer-events-none absolute inset-x-0 bottom-0 flex h-28 items-center px-5 md:pr-24 md:pl-10 xl:h-[10.5rem] xl:px-0"
+  >
+    <AudioBar
+      track={copy.player.track}
+      elapsed={copy.player.elapsed}
+      duration={copy.player.duration}
+      labels={labels}
+      class="pointer-events-auto w-full xl:ml-[29%] xl:w-[42%]"
+    />
   </div>
 </Section>
